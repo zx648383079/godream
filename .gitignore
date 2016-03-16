@@ -73,3 +73,7 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+bin/
+src/github.com/
+src/9fans.net/
