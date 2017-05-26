@@ -3,7 +3,7 @@ package main
 import (
     "database/sql"
     "fmt"
-    _ "github.com/GP-SQL-Driver/Mysql"
+    _ "github.com/go-sql-driver/mysql"
 )
 
 type User struct {
