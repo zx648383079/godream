@@ -1,19 +1,17 @@
 package main
 
-import (
-    "package"
-)
+import "net/http"
 
 func SayHello(w http.ResponseWriter, req *http.Request) {
-    w.Write([]byte("Hello"))
-}
- 
-func main() {
-    http.HandleFunc("/hello", SayHello)
-    http.ListenAndServe(":8001", nil)
- 
+	w.Write([]byte("Hello"))
 }
 
-func ajax(data NewBaseJsonBean)  {
-    
+func main() {
+	http.HandleFunc("/hello", SayHello)
+	http.ListenAndServe(":8001", nil)
+
+}
+
+func ajax(data NewBaseJsonBean) {
+
 }
