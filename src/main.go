@@ -1,31 +1,45 @@
 package main
 
 import (
-    "database/sql"
-    "fmt"
-    _ "github.com/go-sql-driver/mysql"
+	"net/http"
+	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/gzip"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"os"
+	"./database"
+	"flag"
+	"./chat"
 )
 
-type User struct {
-    uid int
-    username string
-    password string
-}
+const defaultPort = "8080"
 
 func main() {
-    db, err := sql.Open("mysql", "root:root@/test?charset=utf8")
-    checkErr(err, "连接成功")
-    stmt, err := db.prepare("INSERT INT userinfo (username, departname,created) values (?, ?, ?)")
-    res,err := stmt.Exec("go", "ddd", "sfa")
-    checkErr(err, "插入成功")
-    db.Close();
-    fmt.Printf("Hello word!");
-}
-
-func checkErr(err error, msg string) {
-    if err != nil {
-        panic(err)
-    } else {
-        fmt.Println(msg)
-    }
+	db := database.GetDB()
+	defer db.Close()
+	flag.Parse()
+	hub := newHub()
+	chat.HubBox = hub
+	go hub.run()
+	router := gin.Default()
+	router.Use(gzip.Gzip(gzip.DefaultCompression))
+	router.Static("/assets", "./assets")
+	router.LoadHTMLGlob("templates/**/*")
+	router.GET("/posts/index", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "posts/index.tmpl", gin.H{
+			"title": "Posts",
+		})
+	})
+	router.GET("/users/index", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "users/index.tmpl", gin.H{
+			"title": "Users",
+		})
+	})
+	router.GET("/ws", chat.Chat)
+	
+	port := os.Getenv("PORT")
+	if len(port) == 0 {
+		port = defaultPort
+	}
+	router.Run(port)
 }
