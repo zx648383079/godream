@@ -5,7 +5,6 @@ import (
 )
 
 func Index(ctx iris.Context) {
-	ctx.JSON(iris.Map{
-		"hh": "hh",
-	})
+	ctx.ViewLayout(iris.NoLayout)
+	ctx.View("auth/index.html")
 }

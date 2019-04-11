@@ -27,6 +27,8 @@ github.com/iris-contrib/formBinder v0.0.0-20190104093907-fbd5963f41e1 h1:7GsNnSL
 github.com/iris-contrib/formBinder v0.0.0-20190104093907-fbd5963f41e1/go.mod h1:i8kTYUOEstd/S8TG0ChTXQdf4ermA/e8vJX0+QruD9w=
 github.com/iris-contrib/go.uuid v2.0.0+incompatible h1:XZubAYg61/JwnJNbZilGjf3b3pB80+OQg2qf6c8BfWE=
 github.com/iris-contrib/go.uuid v2.0.0+incompatible/go.mod h1:iz2lgM/1UnEf1kP0L/+fafWORmlnuysV2EMP8MW+qe0=
+github.com/jinzhu/configor v1.0.0 h1:F8ck+vczDAvSbsz77Mj8pttFZQJTFau1uJ3efJkHoYU=
+github.com/jinzhu/configor v1.0.0/go.mod h1:xycrO0mK6seJRAHXsdyk54QgPJ20aQNpTGi5xv8jQg8=
 github.com/jinzhu/gorm v1.9.2 h1:lCvgEaqe/HVE+tjAR2mt4HbbHAZsQOv3XAZiEZV37iw=
 github.com/jinzhu/gorm v1.9.2/go.mod h1:Vla75njaFJ8clLU1W44h34PjIkijhjHIYnZxMqCdxqo=
 github.com/jinzhu/inflection v0.0.0-20180308033659-04140366298a h1:eeaG9XMUvRBYXJi4pg1ZKM7nxc5AfXfojeLLW7O5J3k=

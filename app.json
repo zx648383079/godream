@@ -1,0 +1,12 @@
+{
+    "debug": true,
+    "port": "8080",
+    "favicon": "../PHP-ZoDream/html/favicon.ico",
+    "asset": "../PHP-ZoDream/html/assets",
+    "view": "./templates",
+    "db": {
+        "user": "root",
+        "password": "root",
+        "schema": "zodream"
+    }
+}

@@ -2,14 +2,11 @@ package database
 
 import (
 	"fmt"
-	"os"
+
+	"zodream/configs"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
-)
-
-var (
-	DB = New()
 )
 
 /**
@@ -17,9 +14,9 @@ var (
  * @param diver string
  */
 func New() *gorm.DB {
-	url := os.Getenv("DATABASE")
+	url := fmt.Sprintf("%s:%s@/%s?charset=utf8&parseTime=True&loc=Local", configs.Config.Db.User, configs.Config.Db.Password, configs.Config.Db.Schema)
 
-	DB, err := gorm.Open("mysql", url)
+	DB, err := gorm.Open(configs.Config.Db.Driver, url)
 	if err != nil {
 		panic(fmt.Sprintf("No error should happen when connecting to  database, but got err=%+v", err))
 	}
