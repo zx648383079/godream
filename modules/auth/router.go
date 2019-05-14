@@ -8,4 +8,5 @@ import (
 
 func Register(app iris.Party) {
 	app.Get("/", controllers.Index)
+	app.Post("/login", controllers.Login)
 }

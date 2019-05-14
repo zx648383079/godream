@@ -1,4 +1,4 @@
-mkdir F:/GoPath/src/golang.org/x
+md F:\GoPath\src\golang.org\x
 git clone https://github.com/golang/tools.git F:/GoPath/src/golang.org/x/tools
 
 go get -v github.com/mdempsky/gocode
@@ -6,6 +6,7 @@ go get -v github.com/uudashr/gopkgs/cmd/gopkgs
 go get -v github.com/ramya-rao-a/go-outline
 go get -v github.com/acroca/go-symbols
 go get -v golang.org/x/tools/cmd/guru
+go get -v golang.org/x/tools/cmd/gopls
 go get -v golang.org/x/tools/cmd/gorename
 go get -v github.com/derekparker/delve/cmd/dlv
 go get -v github.com/stamblerre/gocode
@@ -27,5 +28,6 @@ go build -o F:/GoPath/bin/godef.exe github.com/rogpeppe/godef
 go build -o F:/GoPath/bin/godef-gomod.exe github.com/ianthehat/godef
 %go build -o F:/GoPath/bin/goreturns.exe github.com/sqs/goreturns%
 go build -o F:/GoPath/bin/golint.exe golang.org/x/lint/golint
+go build -o F:/GoPath/bin/gopls.exe golang.org/x/tools/cmd/gopls
 
 pause

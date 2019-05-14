@@ -30,5 +30,5 @@ func main() {
 	app.OnErrorCode(404, func(ctx iris.Context) {
 		ctx.Writef("404 not found here")
 	})
-	app.Run(iris.Addr(configs.Config.Port))
+	app.Run(iris.Addr(":" + configs.Config.Port))
 }
