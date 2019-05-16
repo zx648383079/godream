@@ -38,7 +38,7 @@ require (
 	github.com/sqs/goreturns v0.0.0-20181028201513-538ac6014518 // indirect
 	github.com/stamblerre/gocode v0.0.0-20190327203809-810592086997 // indirect
 	github.com/uudashr/gopkgs v2.0.1+incompatible // indirect
-	golang.org/x/crypto v0.0.0-00010101000000-000000000000 // indirect
+	golang.org/x/crypto v0.0.0-00010101000000-000000000000
 )
 
 replace (

@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"zodream/modules/auth/models"
+
 	"github.com/kataras/iris"
 )
 
@@ -16,12 +18,10 @@ func Index(ctx iris.Context) {
 }
 
 func Login(ctx iris.Context) {
-	data := LoginForm{}
-	err := ctx.ReadForm(&data)
+	user, err := models.LoginEmail(ctx.FormValue("email"), ctx.FormValue("password"))
 	ctx.JSON(iris.Map{
-		"code":  200,
-		"email": data,
-		"a":     ctx.FormValue("email"),
-		"err":   err,
+		"code": 200,
+		"data": user,
+		"err":  err,
 	})
 }

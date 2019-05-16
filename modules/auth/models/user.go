@@ -2,6 +2,8 @@ package models
 
 import (
 	"errors"
+	"zodream/database"
+	"zodream/utils"
 
 	"github.com/asaskevich/govalidator"
 )
@@ -20,12 +22,23 @@ type User struct {
 	UpdatedAt int
 }
 
-func LoginEmail(email string, password string) (user User, err error) {
-	err = nil
-	if !govalidator.IsEmail(email) {
-		err = errors.New("error email")
-		return
-	}
+func (User) TableName() string {
+	return "user"
+}
 
-	return
+func LoginEmail(email string, password string) (*User, error) {
+	if !govalidator.IsEmail(email) {
+		err := errors.New("error email")
+		return nil, err
+	}
+	var user User
+	err := database.DB.Where("email=?", email).First(&user).Error
+	if err != nil {
+		return nil, err
+	}
+	if !utils.PasswordVerify(password, user.Password) {
+		err = errors.New("error password")
+		return nil, err
+	}
+	return &user, err
 }

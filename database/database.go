@@ -9,6 +9,8 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
+var DB *gorm.DB
+
 /**
  * 设置数据库连接
  * @param diver string
@@ -16,10 +18,11 @@ import (
 func New() *gorm.DB {
 	url := fmt.Sprintf("%s:%s@/%s?charset=utf8&parseTime=True&loc=Local", configs.Config.Db.User, configs.Config.Db.Password, configs.Config.Db.Schema)
 
-	DB, err := gorm.Open(configs.Config.Db.Driver, url)
+	db, err := gorm.Open(configs.Config.Db.Driver, url)
 	if err != nil {
 		panic(fmt.Sprintf("No error should happen when connecting to  database, but got err=%+v", err))
+		return nil
 	}
-
-	return DB
+	DB = db
+	return db
 }
