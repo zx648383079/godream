@@ -9,11 +9,13 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
+/*
+* 数据库
+ */
 var DB *gorm.DB
 
-/**
+/*
  * 设置数据库连接
- * @param diver string
  */
 func New() *gorm.DB {
 	url := fmt.Sprintf("%s:%s@/%s?charset=utf8&parseTime=True&loc=Local", configs.Config.Db.User, configs.Config.Db.Password, configs.Config.Db.Schema)

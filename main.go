@@ -8,11 +8,29 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
+
+	"os"
+	"zodream/controllers"
+	"zodream/modules/auth"
+	"zodream/modules/chat"
+	"zodream/modules/gzo"
+	"zodream/modules/shop"
 )
 
 type app struct {
 	*iris.Application
 	db *gorm.DB
+}
+
+func (app *app) Register() {
+	app.Get("/", controllers.Index)
+	app.Get("/home", controllers.Index)
+	app.PartyFunc("/auth", auth.Register)
+	app.PartyFunc("/chat", chat.Register)
+	app.PartyFunc("/shop", shop.Register)
+	if os.Getenv("DEBUG") == "true" {
+		app.PartyFunc("/gzo", gzo.Register)
+	}
 }
 
 func main() {

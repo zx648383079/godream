@@ -1,7 +1,7 @@
-package shop
+package blog
 
 import (
-	"zodream/modules/shop/controllers"
+	"zodream/modules/blog/controllers"
 
 	"github.com/kataras/iris"
 )
