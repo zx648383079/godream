@@ -4,6 +4,7 @@ Go语言学习
 运行
 
 ```
+$env:GOPROXY="https://goproxy.io"
 go run main.go
 ```
 
