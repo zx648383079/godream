@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=no,width=device-width, initial-scale=1">
+    <title>首页-zodream</title>
+    <meta name="Keywords" content="zodream,开发博客,个人博客,ts,vue,php,uwp,angular" />
+    <meta name="Description" content="zodream 开发博客及框架演示和文档。" />
+    <meta name="author" content="zodream" />
+    <link rel="icon" href="/assets/images/favicon.png">
+    <link type="text/css" href="/assets/css/font-awesome.min.css" rel="stylesheet" media="all">
+    <link type="text/css" href="/assets/css/zodream.css" rel="stylesheet" media="all">
+    <link type="text/css" href="/assets/css/dialog.css" rel="stylesheet" media="all">
+    <link type="text/css" href="/assets/css/animate.min.css" rel="stylesheet" media="all">
+    <link type="text/css" href="/assets/css/home.css" rel="stylesheet" media="all">
+    {{ part "header" }}
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <div class="nav-bar">
+                <ul>
+                    <li><a href="{{ url "home" }}">首页</a></li>
+                    <li><a href="/blog">博客</a></li>
+                    <li><a href="{{ url "friend_link" }}">友情链接</a></li>
+                    <li><a href="{{ url "abount" }}">关于</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    {{ yield }}
+    <footer>
+        <div class="container">
+            <div class="friend-link">
+                <div>友情链接</div>
+                <div><a href="http://webjike.com" target="_blank" rel="noopener noreferrer">小呆导航</a></div>
+            </div>
+            <div class="copyright">
+                <a href="http://www.miitbeian.gov.cn/" target="_blank">湘ICP备16003508号</a>
+            </div>
+        </div>
+    </footer>
+    <div class="dialog-cookie-tip">
+        <div class="dialog-body">
+            访问本站，表示您已同意使用Cookies，本站不会主动泄露您的隐私信息。
+        </div>
+        <div class="dialog-footer">
+            <button class="btn">OK</button>
+        </div>
+    </div>
+    <script src="/assets/js/jquery.min.js"></script>
+    <script src="/assets/js/jquery.lazyload.min.js"></script>
+    <script src="/assets/js/jquery.dialog.min.js"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+            var footer = $('footer'),
+                diff = $(window).height() - footer.offset().top - footer.height();
+            if (diff > 0) {
+                footer.css('margin-top', diff + 'px');
+            }
+        });
+    </script>
+    {{ part "footer" }}
+</body>
+</html>

@@ -1,5 +1,6 @@
 package models
 
+// OpenPlatform 开放账户管理
 type OpenPlatform struct {
 	ID          uint
 	UserID      int

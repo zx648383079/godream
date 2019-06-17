@@ -1,7 +1,12 @@
 package configs
 
-import "github.com/jinzhu/configor"
+import (
+	"fmt"
 
+	"github.com/jinzhu/configor"
+)
+
+// Config 系统配置信息
 var Config = struct {
 	Host    string `default:"localhost"`
 	Port    string `default:"8080"`
@@ -19,6 +24,12 @@ var Config = struct {
 	}
 }{}
 
+// Init 配置初始化
 func Init(file string) {
 	configor.Load(&Config, file)
+}
+
+// Host 获取host
+func Host() string {
+	return fmt.Sprintf("%s:%s", Config.Host, Config.Port)
 }

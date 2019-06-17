@@ -8,12 +8,15 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
+	"github.com/kataras/iris/core/router"
 
 	"os"
 	"zodream/controllers"
 	"zodream/modules/auth"
+	"zodream/modules/blog"
 	"zodream/modules/chat"
 	"zodream/modules/gzo"
+	"zodream/modules/open"
 	"zodream/modules/shop"
 )
 
@@ -23,11 +26,18 @@ type app struct {
 }
 
 func (app *app) Register() {
-	app.Get("/", controllers.Index)
+	homeRoute := app.Get("/", controllers.Index)
+	homeRoute.Name = "home"
 	app.Get("/home", controllers.Index)
+	aboutRoute := app.Get("/about", controllers.About)
+	aboutRoute.Name = "abount"
+	linkRoute := app.Get("/friend_link", controllers.FriendLink)
+	linkRoute.Name = "friend_link"
 	app.PartyFunc("/auth", auth.Register)
+	app.PartyFunc("/blog", blog.Register)
 	app.PartyFunc("/chat", chat.Register)
 	app.PartyFunc("/shop", shop.Register)
+	app.PartyFunc("/open", open.Register)
 	if os.Getenv("DEBUG") == "true" {
 		app.PartyFunc("/gzo", gzo.Register)
 	}
@@ -39,8 +49,10 @@ func main() {
 	defer app.db.Close()
 	app.Register()
 	tmpl := iris.HTML(configs.Config.View, ".html")
+	rv := router.NewRoutePathReverser(app, router.WithHost(configs.Host()))
+	tmpl.AddFunc("url", rv.URL)
 	tmpl.Reload(true) // reload templates on each request (development mode)
-	app.RegisterView(tmpl.Layout("layout.html"))
+	app.RegisterView(tmpl.Layout("layouts/layout.html"))
 	fmt.Println(configs.Config.Favicon)
 	app.Favicon(configs.Config.Favicon)
 	app.StaticWeb("/assets", configs.Config.Asset)
