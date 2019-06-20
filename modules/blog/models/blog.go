@@ -1,13 +1,14 @@
 package models
 
 import (
-	"zodream/modules/auth/models"
+	"log"
 	"zodream/database"
+	"zodream/modules/auth/models"
 )
 
 // Blog 博客Model
 type Blog struct {
-	ID            uint
+	ID            uint `gorm:"primary_key" json:"id"`
 	Title         string
 	Description   string
 	Keywords      string
@@ -35,9 +36,10 @@ func (Blog) TableName() string {
 }
 
 func GetBlogList() (data []Blog) {
-	// var users []models.User
+	//var users []models.User
 	// database.DB.Where("name = ?", "jinzhu").Find(&data)
-	database.DB.Limit(20).Offset(0).Find(&data)
-	// database.DB.Model(&data).Related(&users)
-	return 
+	database.DB.LogMode(true)
+	database.DB.Unscoped().Where("deleted_at=0").Preload("User").Limit(2).Offset(0).Find(&data)
+	log.Println(data[0].User.Name)
+	return
 }
