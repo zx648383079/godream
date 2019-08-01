@@ -18,3 +18,9 @@ func About(ctx iris.Context) {
 func FriendLink(ctx iris.Context) {
 	ctx.View("home/friend_link.html")
 }
+
+// To 跳转到外部链接
+func To(ctx iris.Context) {
+	uri := ctx.URLParam("url")
+	ctx.View("home/to.html")
+}
