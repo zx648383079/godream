@@ -1,32 +1,31 @@
 package middleware
 
 import (
-	"github.com/jinzhu/gorm"
-	"github.com/kataras/iris"
-	"github.com/kataras/iris/context"
-	"zodream/modules/open/models"
-	"zodream/utils"
+	"github.com/iris-contrib/middleware/jwt"
+	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris/v12/context"
 )
 
-type Middleware struct {
-	db *gorm.DB
-}
+var (
+	// JWT JWT Middleware
+	JWT *jwt.Middleware
+)
 
-func New(db *gorm.DB) *Middleware {
-	jwt := new(Middleware)
-	jwt.db = db
-	return jwt
-}
+func initJWT() {
+	JWT = jwt.New(jwt.Config{
+		ErrorHandler: func(ctx context.Context, err error) {
+			if err == nil {
+				return
+			}
+			ctx.StopExecution()
+			ctx.StatusCode(iris.StatusUnauthorized)
+			ctx.JSON(model.ErrorUnauthorized(err))
+		},
 
-func (jwt *Middleware) Serve(ctx context.Context) {
-	appid := ctx.URLParam("appid")
-	platform := models.FindPlatform(appid)
-	if platform == nil {
-		ctx.StatusCode(404)
-		ctx.JSON(utils.FailureJson("APP ID error"))
-		ctx.StopExecution()
-		return
-	}
+		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
+			return []byte("My Secret"), nil
+		},
 
-	ctx.Next()
+		SigningMethod: jwt.SigningMethodHS256,
+	})
 }

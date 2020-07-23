@@ -20,7 +20,7 @@ type OpenPlatform struct {
 	UpdatedAt   int
 }
 
-func FindPlatform(appid string) (model * OpenPlatform) {
+func FindPlatform(appid string) (model *OpenPlatform) {
 	database.DB.Where("appid=?", appid).First(&model)
 	return
 }

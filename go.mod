@@ -4,11 +4,10 @@ go 1.12
 
 require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
-	github.com/Joker/jade v1.0.0 // indirect
+	github.com/JabinGP/demo-chatroom v0.0.0-20200122164709-066caf548dca
 	github.com/Shopify/goreferrer v0.0.0-20181106222321-ec9c9a553398 // indirect
 	github.com/acroca/go-symbols v0.1.1 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535
-	github.com/aymerick/raymond v2.0.2+incompatible // indirect
 	github.com/dgraph-io/ristretto v0.0.3 // indirect
 	github.com/eknkc/amber v0.0.0-20171010120322-cdade1c07385 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
@@ -23,6 +22,8 @@ require (
 	github.com/iris-contrib/blackfriday v2.0.0+incompatible // indirect
 	github.com/iris-contrib/formBinder v5.0.0+incompatible // indirect
 	github.com/iris-contrib/go.uuid v2.0.0+incompatible // indirect
+	github.com/iris-contrib/middleware/cors v0.0.0-20191219204441-78279b78a367
+	github.com/iris-contrib/middleware/jwt v0.0.0-20191219204441-78279b78a367
 	github.com/jinzhu/configor v1.2.0
 	github.com/jinzhu/gorm v1.9.15
 	github.com/json-iterator/go v1.1.10 // indirect
@@ -32,11 +33,11 @@ require (
 	github.com/karrick/godirwalk v1.10.3 // indirect
 	github.com/kataras/golog v0.0.18 // indirect
 	github.com/kataras/iris v11.1.1+incompatible
+	github.com/kataras/iris/v12 v12.1.8
 	github.com/keegancsmith/rpc v1.1.0 // indirect
 	github.com/klauspost/compress v1.10.10 // indirect
 	github.com/klauspost/cpuid v1.3.1 // indirect
 	github.com/mattn/goveralls v0.0.2 // indirect
-	github.com/mdempsky/gocode v0.0.0-20190203001940-7fb65232883f // indirect
 	github.com/microcosm-cc/bluemonday v1.0.3 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
