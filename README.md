@@ -13,6 +13,12 @@ go build
 .\zodream
 ```
 
+更新
+```
+go get -u
+```
+
+
 安装环境
 
 ```

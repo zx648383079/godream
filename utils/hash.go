@@ -2,6 +2,7 @@ package utils
 
 import (
 	"crypto/md5"
+	"encoding/base64"
 	"encoding/hex"
 	"log"
 
@@ -32,4 +33,18 @@ func Md5Str(str string) string {
 	h := md5.New()
 	h.Write([]byte(str))
 	return hex.EncodeToString(h.Sum(nil))
+}
+
+// Base64Encode base64 编码，用在url 中 否则使用 base64.StdEncoding
+func Base64Encode(str string) string {
+	return base64.URLEncoding.EncodeToString([]byte(str))
+}
+
+// Base64Decode base64 解码，用在url 中
+func Base64Decode(str string) string {
+	decodeBytes, err := base64.URLEncoding.DecodeString(str)
+	if err != nil {
+		return ""
+	}
+	return string(decodeBytes)
 }

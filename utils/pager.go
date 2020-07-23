@@ -55,4 +55,3 @@ func NewPager(page, size, total int) *Pager {
 	}
 	return p
 }
-}

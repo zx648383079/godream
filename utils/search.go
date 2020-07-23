@@ -1,20 +1,21 @@
 package utils
 
 import (
-	"github.com/jinzhu/gorm"
-	"strings"
 	"fmt"
+	"strings"
+
+	"github.com/jinzhu/gorm"
 )
 
-func search(query *gorm.DB, columns interface{}, value string) *gorm.DB {
+func search(query *gorm.DB, columns []string, value string) *gorm.DB {
 	keywords := strings.Split(value, " ")
 	for _, item := range keywords {
-		item = strings.Trim(item)
+		item = strings.TrimSpace(item)
 		if len(item) < 1 {
-			continue;
+			continue
 		}
 		for _, column := range columns {
-			query.Or(fmt.Sprintf('%s=?', column), fmt.Sprintf('%%%s%%'), item)
+			query.Or(fmt.Sprintf("%s=?", column), fmt.Sprintf("%%%s%%", item))
 		}
 	}
 	return query

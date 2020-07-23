@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"zodream/utils"
+
 	"github.com/kataras/iris"
 )
 
@@ -22,5 +24,12 @@ func FriendLink(ctx iris.Context) {
 // To 跳转到外部链接
 func To(ctx iris.Context) {
 	uri := ctx.URLParam("url")
+	if uri != "" {
+		uri = utils.Base64Decode(uri + "=")
+	}
+	if uri == "" {
+		uri = "/"
+	}
+	ctx.ViewData("url", &uri)
 	ctx.View("home/to.html")
 }
