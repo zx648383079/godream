@@ -1,10 +1,11 @@
 package utils
 
-import "github.com/kataras/iris"
+import "github.com/kataras/iris/v12"
+
 // SuccessJson 成功返回的json
-func SuccessJson(data... interface{}) iris.Map  {
+func SuccessJson(data ...interface{}) iris.Map {
 	json := iris.Map{
-		"code": 200,
+		"code":   200,
 		"status": "success",
 	}
 	if len(data) > 0 {
@@ -15,10 +16,11 @@ func SuccessJson(data... interface{}) iris.Map  {
 	}
 	return json
 }
+
 // FailureJson 失败时返回的json
-func FailureJson(data... interface{}) iris.Map  {
+func FailureJson(data ...interface{}) iris.Map {
 	json := iris.Map{
-		"code": 404,
+		"code":   404,
 		"status": "failure",
 	}
 	if len(data) > 1 {

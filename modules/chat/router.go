@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"zodream/modules/chat/controllers"
 
-	"github.com/kataras/iris"
-	"github.com/kataras/iris/websocket"
+	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris/v12/websocket"
 )
 
 func Register(app iris.Party) {

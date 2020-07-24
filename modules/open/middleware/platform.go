@@ -1,31 +1,41 @@
 package middleware
 
 import (
-	"zodream/modules/open/models"
+	"zodream/modules/open/platform"
 	"zodream/utils"
 
-	"github.com/jinzhu/gorm"
-	"github.com/kataras/iris/context"
+	"github.com/kataras/iris/v12"
+
+	"github.com/kataras/iris/v12/context"
 )
 
-type Middleware struct {
-	db *gorm.DB
+// RESTful rest 代码
+type RESTful struct {
 }
 
-func New(db *gorm.DB) *Middleware {
-	jwt := new(Middleware)
-	jwt.db = db
-	return jwt
+// New 初始化
+func New() *RESTful {
+	rest := new(RESTful)
+	return rest
 }
 
-func (jwt *Middleware) Serve(ctx context.Context) {
+// Serve 执行
+func (rest *RESTful) Serve(ctx context.Context) {
 	appid := ctx.URLParam("appid")
-	platform := models.FindPlatform(appid)
-	if platform == nil {
-		ctx.StatusCode(404)
-		ctx.JSON(utils.FailureJson("APP ID error"))
+	api, err := platform.NewPlatform(appid)
+	if err != nil {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON(utils.FailureJson(err.Error))
 		ctx.StopExecution()
 		return
 	}
+	err = api.Verify(ctx)
+	if err != nil {
+		ctx.StatusCode(iris.StatusBadRequest)
+		ctx.JSON(utils.FailureJson(err.Error))
+		ctx.StopExecution()
+		return
+	}
+	ctx.Values().Set(platform.PlatformKey, api)
 	ctx.Next()
 }

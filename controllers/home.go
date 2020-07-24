@@ -3,7 +3,7 @@ package controllers
 import (
 	"zodream/utils"
 
-	"github.com/kataras/iris"
+	"github.com/kataras/iris/v12"
 )
 
 // Index 显示页面

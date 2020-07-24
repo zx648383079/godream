@@ -1,7 +1,7 @@
-package gzo
+package wx
 
 import (
-	"zodream/modules/gzo/controllers"
+	"zodream/modules/wx/controllers"
 
 	"github.com/kataras/iris/v12"
 )
