@@ -66,12 +66,12 @@
             <a class="active" href="/blog?sort=new">最新</a>
             <a href="/blog?sort=hot">最热</a>
         </div>
-        {{ range .Blogs }}
+        {{ range .items }}
         <dl class="book-item">
             <dt><a href="/blog?id=54">{{ .Title }}</a>
                 <span class="book-time">2019-04-21</span></dt>
             <dd>
-                <p>windows下设置Git 区分文件名大小写</p>
+                <p>{{ .Description }}</p>
                 <a class="author" href="/blog?user=1"><i
                         class="fa fa-edit"></i><b>zodream</b></a>
                 <a class="category" href="/blog?category=1"><i

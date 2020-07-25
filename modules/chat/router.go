@@ -1,12 +1,20 @@
 package chat
 
 import (
-	"fmt"
+	"net/http"
+	"strings"
 	"zodream/modules/chat/controllers"
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/websocket"
 )
+
+var events = websocket.Namespaces{
+	"default": websocket.Events{
+		websocket.OnRoomJoined: onRoomJoined,
+		websocket.OnRoomLeft:   onRoomLeft,
+	},
+}
 
 func Register(app iris.Party) {
 	app.Get("/", controllers.Index)
@@ -15,29 +23,45 @@ func Register(app iris.Party) {
 
 func setupWebsocket(app iris.Party) {
 	// create our echo websocket server
-	ws := websocket.New(websocket.Config{
-		ReadBufferSize:  1024,
-		WriteBufferSize: 1024,
-	})
-	ws.OnConnection(handleConnection)
+	ws := websocket.New(websocket.DefaultGorillaUpgrader, events)
+	ws.IDGenerator = func(w http.ResponseWriter, r *http.Request) string {
 
-	// register the server on an endpoint.
-	// see the inline javascript code in the websockets.html,
-	// this endpoint is used to connect to the server.
-	app.Get("/ws", ws.Handler())
-	// serve the javascript built'n client-side library,
-	// see websockets.html script tags, this path is used.
-	app.Any("/iris-ws.js", websocket.ClientHandler())
+		return r.RemoteAddr[:strings.IndexByte(r.RemoteAddr, ':')]
+	}
+	app.Get("/ws", websocket.Handler(ws))
 }
 
-func handleConnection(c websocket.Connection) {
-	// Read events from browser
-	c.On("chat", func(msg string) {
-		// Print the message to the console, c.Context() is the iris's http context.
-		fmt.Printf("%s sent: %s\n", c.Context().RemoteAddr(), msg)
-		// Write message back to the client message owner with:
-		// c.Emit("chat", msg)
-		// Write message to all except this client with:
-		c.To(websocket.Broadcast).Emit("chat", msg)
+func onRoomJoined(ns *websocket.NSConn, msg websocket.Message) error {
+	// the roomName here is the source.
+	pageSource := string(msg.Room)
+
+	// fire the "onNewVisit" client event
+	// on each connection joined to this room (source page)
+	// and notify of the new visit,
+	// including this connection (see nil on first input arg).
+	ns.Conn.Server().Broadcast(nil, websocket.Message{
+		Namespace: msg.Namespace,
+		Room:      pageSource,
+		Event:     "onNewVisit", // fire the "onNewVisit" client event.
+		Body:      []byte("1"),
 	})
+
+	return nil
+}
+
+func onRoomLeft(ns *websocket.NSConn, msg websocket.Message) error {
+	// the roomName here is the source.
+	// pageV := v.Get(msg.Room)
+
+	// fire the "onNewVisit" client event
+	// on each connection joined to this room (source page)
+	// and notify of the new, decremented by one, visits count.
+	ns.Conn.Server().Broadcast(nil, websocket.Message{
+		Namespace: msg.Namespace,
+		Room:      msg.Room,
+		Event:     "onNewVisit",
+		Body:      []byte("7"),
+	})
+
+	return nil
 }

@@ -1,8 +1,6 @@
 package models
 
 import (
-	"log"
-	"zodream/database"
 	"zodream/modules/auth/models"
 )
 
@@ -31,15 +29,7 @@ type Blog struct {
 	UpdatedAt     int
 }
 
+// TableName 表名
 func (Blog) TableName() string {
 	return "blog"
-}
-
-func GetBlogList() (data []Blog) {
-	//var users []models.User
-	// database.DB.Where("name = ?", "jinzhu").Find(&data)
-	database.DB.LogMode(true)
-	database.DB.Unscoped().Where("deleted_at=0").Preload("User").Limit(2).Offset(0).Find(&data)
-	log.Println(data[0].User.Name)
-	return
 }

@@ -31,7 +31,6 @@ require (
 	github.com/juju/testing v0.0.0-20180920084828-472a3e8b2073 // indirect
 	github.com/karrick/godirwalk v1.10.3 // indirect
 	github.com/kataras/golog v0.0.18 // indirect
-	github.com/kataras/iris v11.1.1+incompatible
 	github.com/kataras/iris/v12 v12.1.8
 	github.com/keegancsmith/rpc v1.1.0 // indirect
 	github.com/klauspost/compress v1.10.10 // indirect
