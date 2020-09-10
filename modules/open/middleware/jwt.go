@@ -19,8 +19,9 @@ func initJWT() {
 			if err == nil {
 				return
 			}
+			ctx.StatusCode(iris.StatusUnauthorized)
+			ctx.JSON(ctx.Values().Get("json").(*platform.PlatformResponse).RenderFailure("请先登录"))
 			ctx.StopExecution()
-			ctx.Values().Get(platform.PlatformKey).(*platform.Platform).RenderFailure(ctx, iris.StatusUnauthorized, "请先登录")
 		},
 
 		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {

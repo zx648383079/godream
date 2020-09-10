@@ -4,43 +4,55 @@ import (
 	"zodream/utils"
 
 	"github.com/kataras/iris/v12"
-	"github.com/kataras/iris/v12/context"
 )
 
-// RenderFailure 失败响应
-func (app Platform) RenderFailure(ctx context.Context, code int, message string) error {
-	ctx.StatusCode(code)
-	ctx.JSON(iris.Map{
-		"code":    code,
-		"message": message,
-	})
-	return nil
+// PlatformResponse json响应
+type PlatformResponse struct {
+	Platform *Platform
 }
 
-// RenderPage 输出分页
-func (app Platform) RenderPage(ctx context.Context, data []interface{}, page *utils.Pager) error {
-	ctx.JSON(iris.Map{
+// Render 响应
+func (PlatformResponse) Render(data iris.Map) iris.Map {
+	return data
+}
+
+// RenderData 成功返回的json data, message
+func (r PlatformResponse) RenderData(data ...interface{}) iris.Map {
+	json := iris.Map{}
+	if len(data) > 0 {
+		json["data"] = data[0]
+	}
+	if len(data) > 1 {
+		json["message"] = data[1]
+	}
+	return r.Render(json)
+}
+
+// RenderPage 响应分页
+func (r PlatformResponse) RenderPage(data []interface{}, page utils.Pager) iris.Map {
+	json := iris.Map{
+		"data": data,
 		"paging": iris.Map{
 			"limit":  page.Size,
 			"offset": page.Current,
 			"total":  page.Total,
-			"more":   page.Total < page.Current,
+			"more":   page.IsNext,
 		},
-		"data": data,
-	})
-	return nil
+	}
+	return r.Render(json)
 }
 
-// RenderData 输出data
-func (app Platform) RenderData(ctx context.Context, data interface{}) error {
-	ctx.JSON(iris.Map{
-		"data": data,
-	})
-	return nil
-}
-
-// Render 响应数据
-func (app Platform) Render(ctx context.Context, data interface{}) error {
-	ctx.JSON(data)
-	return nil
+// RenderFailure 失败时返回的json message code
+func (r PlatformResponse) RenderFailure(data ...interface{}) iris.Map {
+	json := iris.Map{
+		"code":    404,
+		"message": "error",
+	}
+	if len(data) > 1 {
+		json["code"] = data[1]
+	}
+	if len(data) > 0 {
+		json["message"] = data[0]
+	}
+	return r.Render(json)
 }

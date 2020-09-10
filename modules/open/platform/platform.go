@@ -2,6 +2,7 @@ package platform
 
 import (
 	"fmt"
+	"regexp"
 	"sort"
 	"strings"
 	"zodream/database"
@@ -22,14 +23,57 @@ type Platform struct {
 
 // NewPlatform 根据appid 获取认证信息
 func NewPlatform(appid string) (*Platform, error) {
-	var model *models.OpenPlatform
+	var model models.OpenPlatform
 	database.DB.Where("appid=?", appid).First(&model)
 	if model.ID < 1 {
 		return nil, fmt.Errorf("platform not found")
 	}
 	var app = new(Platform)
-	app.model = model
+	app.model = &model
 	return app, nil
+}
+
+// VerifyRule 验证规则
+func (app Platform) VerifyRule(path string) bool {
+	path = strings.Replace(path, "/open/", "", 1)
+	if path == "" {
+		return true
+	}
+	rules := strings.Split(app.model.Rules, "\n")
+	for _, rule := range rules {
+		rule = strings.Trim(rule, " ")
+		if rule == "" {
+			continue
+		}
+		if rule[0] == '-' {
+			if app.verifyOneRule(rule[1:], path) {
+				return false
+			}
+			continue
+		}
+		if app.verifyOneRule(rule, path) {
+			return true
+		}
+	}
+	return true
+}
+
+func (app Platform) verifyOneRule(rule string, path string) bool {
+	if rule == "*" {
+		return true
+	}
+	switch rule[0] {
+	case '@':
+		return true
+	case '^':
+		res, _ := regexp.MatchString(path, rule)
+		return res
+	case '~':
+		res, _ := regexp.MatchString(path, rule[1:])
+		return res
+	default:
+		return rule == path
+	}
 }
 
 // Verify 验证

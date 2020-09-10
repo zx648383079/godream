@@ -1,7 +1,7 @@
 package api
 
 import (
-	"zodream/modules/open/platform"
+	"zodream/utils/response"
 
 	"github.com/kataras/iris/v12"
 )
@@ -9,6 +9,6 @@ import (
 // Index 登录页面
 func Index(ctx iris.Context) {
 
-	api := ctx.Values().Get(platform.PlatformKey).(*platform.Platform)
-	api.RenderData(ctx, 1)
+	api := ctx.Values().Get("json").(response.IJsonResponse)
+	ctx.JSON(api.RenderData(1))
 }

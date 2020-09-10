@@ -11,7 +11,7 @@ import (
 // Register 注册路由
 func Register(app iris.Party) {
 	app.Get("/", controllers.Index)
-	app.Use(middleware.CORS, middleware.RESTful)
+	app.Use(middleware.REST, middleware.CORS)
 	{
 		app.PartyFunc("/auth", auth.RegisterAPI)
 		// app.PartyFunc("/chat", chat.RegisterAPI)

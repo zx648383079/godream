@@ -9,6 +9,7 @@ type OpenPlatform struct {
 	Domain      string
 	Appid       string
 	Secret      string
+	Rules       string
 	SignType    int
 	SignKey     string
 	EncryptType int
@@ -16,4 +17,9 @@ type OpenPlatform struct {
 	Status      int
 	CreatedAt   int
 	UpdatedAt   int
+}
+
+// TableName 表
+func (OpenPlatform) TableName() string {
+	return "open_platform"
 }
