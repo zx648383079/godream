@@ -1,11 +1,10 @@
 package blog
 
 import (
-	"zodream/modules/blog/controllers"
-
-	"github.com/kataras/iris/v12"
+	"github.com/gin-gonic/gin"
+	"zodream.cn/godream/modules/blog/controllers"
 )
 
-func Register(app iris.Party) {
-	app.Get("/", controllers.Index)
+func Register(app *gin.RouterGroup) {
+	app.GET("/", controllers.Index)
 }

@@ -1,17 +1,16 @@
 package response
 
 import (
-	"zodream/utils"
-
-	"github.com/kataras/iris/v12"
+	"github.com/gin-gonic/gin"
+	"zodream.cn/godream/utils"
 )
 
 // IJsonResponse json响应接口
 type IJsonResponse interface {
-	Render(data iris.Map) iris.Map
-	RenderData(data ...interface{}) iris.Map
-	RenderPage(data []interface{}, page utils.Pager) iris.Map
-	RenderFailure(data ...interface{}) iris.Map
+	Render(data gin.H) gin.H
+	RenderData(data ...interface{}) gin.H
+	RenderPage(data []interface{}, page utils.Pager) gin.H
+	RenderFailure(data ...interface{}) gin.H
 }
 
 // JSONResponse json响应
@@ -19,13 +18,13 @@ type JSONResponse struct {
 }
 
 // Render 响应
-func (JSONResponse) Render(data iris.Map) iris.Map {
+func (JSONResponse) Render(data gin.H) gin.H {
 	return data
 }
 
 // RenderData 成功返回的json data, message
-func (r JSONResponse) RenderData(data ...interface{}) iris.Map {
-	json := iris.Map{
+func (r JSONResponse) RenderData(data ...interface{}) gin.H {
+	json := gin.H{
 		"code":   200,
 		"status": "success",
 	}
@@ -39,12 +38,12 @@ func (r JSONResponse) RenderData(data ...interface{}) iris.Map {
 }
 
 // RenderPage 响应分页
-func (r JSONResponse) RenderPage(data []interface{}, page utils.Pager) iris.Map {
-	json := iris.Map{
+func (r JSONResponse) RenderPage(data []interface{}, page utils.Pager) gin.H {
+	json := gin.H{
 		"code":   200,
 		"status": "success",
 		"data":   data,
-		"paging": iris.Map{
+		"paging": gin.H{
 			"limit":  page.Size,
 			"offset": page.Current,
 			"total":  page.Total,
@@ -55,8 +54,8 @@ func (r JSONResponse) RenderPage(data []interface{}, page utils.Pager) iris.Map 
 }
 
 // RenderFailure 失败时返回的json message code
-func (r JSONResponse) RenderFailure(data ...interface{}) iris.Map {
-	json := iris.Map{
+func (r JSONResponse) RenderFailure(data ...interface{}) gin.H {
+	json := gin.H{
 		"code":   404,
 		"status": "failure",
 	}

@@ -1,35 +1,35 @@
 package controllers
 
 import (
-	"zodream/utils"
-
-	"github.com/kataras/iris/v12"
+	"github.com/gin-gonic/gin"
+	"zodream.cn/godream/utils"
 )
 
 // Index 显示页面
-func Index(ctx iris.Context) {
-	ctx.View("home/index.html")
+func Index(ctx *gin.Context) {
+	ctx.HTML(200, "index.html", gin.H{})
 }
 
 // About 关于我们
-func About(ctx iris.Context) {
-	ctx.View("home/about.html")
+func About(ctx *gin.Context) {
+	ctx.HTML(200, "home/about.html", gin.H{})
 }
 
 // FriendLink 友情链接
-func FriendLink(ctx iris.Context) {
-	ctx.View("home/friend_link.html")
+func FriendLink(ctx *gin.Context) {
+	ctx.HTML(200, "home/friend_link.html", gin.H{})
 }
 
 // To 跳转到外部链接
-func To(ctx iris.Context) {
-	uri := ctx.URLParam("url")
+func To(ctx *gin.Context) {
+	uri := ctx.GetString("url")
 	if uri != "" {
 		uri = utils.Base64Decode(uri + "=")
 	}
 	if uri == "" {
 		uri = "/"
 	}
-	ctx.ViewData("url", &uri)
-	ctx.View("home/to.html")
+	ctx.HTML(200, "home/to.html", gin.H{
+		"url": uri,
+	})
 }

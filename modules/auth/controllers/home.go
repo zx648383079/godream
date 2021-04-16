@@ -1,10 +1,9 @@
 package controllers
 
 import (
-	"zodream/modules/auth/models"
-	"zodream/sessions"
-
-	"github.com/kataras/iris/v12"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
+	"zodream.cn/godream/modules/auth/models"
 )
 
 // LoginForm 登录表单
@@ -15,19 +14,19 @@ type LoginForm struct {
 }
 
 // Index 登录页面
-func Index(ctx iris.Context) {
-	ctx.ViewLayout(iris.NoLayout)
-	ctx.View("auth/index.html")
+func Index(ctx *gin.Context) {
+	ctx.HTML(200, "auth/index.html", gin.H{})
 }
 
 // Login 登录
-func Login(ctx iris.Context) {
-	session := sessions.Driver.Start(ctx)
-	user, err := models.LoginEmail(ctx.FormValue("email"), ctx.FormValue("password"))
+func Login(ctx *gin.Context) {
+	session := sessions.Default(ctx)
+	user, err := models.LoginEmail(ctx.PostForm("email"), ctx.PostForm("password"))
 	if err == nil {
 		session.Set("userID", user.ID)
+		session.Save()
 	}
-	ctx.JSON(iris.Map{
+	ctx.JSON(200, gin.H{
 		"code": 200,
 		"data": user,
 		"err":  err,

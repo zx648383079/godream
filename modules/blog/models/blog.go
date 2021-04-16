@@ -1,7 +1,7 @@
 package models
 
 import (
-	"zodream/modules/auth/models"
+	"zodream.cn/godream/modules/auth/models"
 )
 
 // Blog 博客Model

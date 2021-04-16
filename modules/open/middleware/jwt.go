@@ -1,33 +1,30 @@
 package middleware
 
 import (
-	"zodream/modules/open/platform"
-
-	"github.com/iris-contrib/middleware/jwt"
-	"github.com/kataras/iris/v12"
-	"github.com/kataras/iris/v12/context"
+	jwt_lib "github.com/dgrijalva/jwt-go"
+	"github.com/dgrijalva/jwt-go/request"
+	"github.com/gin-gonic/gin"
+	"zodream.cn/godream/configs"
+	"zodream.cn/godream/modules/open/platform"
 )
 
 var (
 	// JWT JWT Middleware
-	JWT *jwt.Middleware
+	JWT gin.HandlerFunc
 )
 
 func initJWT() {
-	JWT = jwt.New(jwt.Config{
-		ErrorHandler: func(ctx context.Context, err error) {
-			if err == nil {
-				return
-			}
-			ctx.StatusCode(iris.StatusUnauthorized)
-			ctx.JSON(ctx.Values().Get("json").(*platform.PlatformResponse).RenderFailure("请先登录"))
-			ctx.StopExecution()
-		},
+	JWT = func(c *gin.Context) {
+		_, err := request.ParseFromRequest(c.Request, request.OAuth2Extractor, func(token *jwt_lib.Token) (interface{}, error) {
+			b := []byte(configs.Config.Auth.Key)
+			return b, nil
+		})
 
-		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
-			return []byte("zodream cn"), nil
-		},
+		if err != nil {
+			c.AbortWithStatusJSON(401, c.Keys["json"].(*platform.PlatformResponse).RenderFailure("请先登录"))
+			return
+		}
+		c.Next()
+	}
 
-		SigningMethod: jwt.SigningMethodHS256,
-	})
 }

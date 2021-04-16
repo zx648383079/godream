@@ -3,8 +3,9 @@ package dao
 import (
 	"fmt"
 	"strings"
-	"zodream/database"
-	"zodream/modules/gzo/models"
+
+	"zodream.cn/godream/database"
+	"zodream.cn/godream/modules/gzo/models"
 )
 
 // GetTables 获取所有的table

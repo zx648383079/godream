@@ -5,11 +5,11 @@ import (
 	"regexp"
 	"sort"
 	"strings"
-	"zodream/database"
-	"zodream/modules/open/models"
-	"zodream/utils"
 
-	"github.com/kataras/iris/v12/context"
+	"github.com/gin-gonic/gin"
+	"zodream.cn/godream/database"
+	"zodream.cn/godream/modules/open/models"
+	"zodream.cn/godream/utils"
 )
 
 // PlatformKey 全局key
@@ -77,7 +77,7 @@ func (app Platform) verifyOneRule(rule string, path string) bool {
 }
 
 // Verify 验证
-func (app Platform) Verify(ctx context.Context) error {
+func (app Platform) Verify(ctx *gin.Context) error {
 	if app.model.SignType < 1 {
 		return nil
 	}
@@ -85,14 +85,14 @@ func (app Platform) Verify(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	if sign == ctx.URLParam("sign") {
+	if sign == ctx.GetString("sign") {
 		return nil
 	}
 	return fmt.Errorf("sign verify error")
 }
 
 // Sign 签名
-func (app Platform) Sign(ctx context.Context) (string, error) {
+func (app Platform) Sign(ctx *gin.Context) (string, error) {
 	if app.model.SignType < 1 {
 		return "", nil
 	}
@@ -106,17 +106,16 @@ func (app Platform) Sign(ctx context.Context) (string, error) {
 	return "", nil
 }
 
-func (app Platform) getSignContent(ctx context.Context) (string, error) {
+func (app Platform) getSignContent(ctx *gin.Context) (string, error) {
 	if app.model.SignKey == "" {
-		data := ctx.URLParams()
 		var keys []string
-		for k := range data {
-			keys = append(keys, k)
+		for _, v := range ctx.Params {
+			keys = append(keys, v.Key)
 		}
 		sort.Strings(keys)
 		var b strings.Builder
 		for _, k := range keys {
-			b.WriteString(data[k])
+			b.WriteString(ctx.GetString(k))
 		}
 		b.WriteString(app.model.Secret)
 		return b.String(), nil
@@ -136,11 +135,11 @@ func (app Platform) getSignContent(ctx context.Context) (string, error) {
 			b.WriteString("+")
 			continue
 		}
-		if ctx.URLParamExists(k) {
-			b.WriteString(ctx.URLParam(k))
+		if val, err := ctx.Params.Get(k); err {
+			b.WriteString(val)
 			continue
 		}
-		b.WriteString(ctx.FormValue(k))
+		b.WriteString(ctx.PostForm(k))
 	}
 	return b.String(), nil
 }

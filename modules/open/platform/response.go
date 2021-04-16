@@ -1,9 +1,8 @@
 package platform
 
 import (
-	"zodream/utils"
-
-	"github.com/kataras/iris/v12"
+	"github.com/gin-gonic/gin"
+	"zodream.cn/godream/utils"
 )
 
 // PlatformResponse json响应
@@ -12,13 +11,13 @@ type PlatformResponse struct {
 }
 
 // Render 响应
-func (PlatformResponse) Render(data iris.Map) iris.Map {
+func (PlatformResponse) Render(data gin.H) gin.H {
 	return data
 }
 
 // RenderData 成功返回的json data, message
-func (r PlatformResponse) RenderData(data ...interface{}) iris.Map {
-	json := iris.Map{}
+func (r PlatformResponse) RenderData(data ...interface{}) gin.H {
+	json := gin.H{}
 	if len(data) > 0 {
 		json["data"] = data[0]
 	}
@@ -29,10 +28,10 @@ func (r PlatformResponse) RenderData(data ...interface{}) iris.Map {
 }
 
 // RenderPage 响应分页
-func (r PlatformResponse) RenderPage(data []interface{}, page utils.Pager) iris.Map {
-	json := iris.Map{
+func (r PlatformResponse) RenderPage(data []interface{}, page utils.Pager) gin.H {
+	json := gin.H{
 		"data": data,
-		"paging": iris.Map{
+		"paging": gin.H{
 			"limit":  page.Size,
 			"offset": page.Current,
 			"total":  page.Total,
@@ -43,8 +42,8 @@ func (r PlatformResponse) RenderPage(data []interface{}, page utils.Pager) iris.
 }
 
 // RenderFailure 失败时返回的json message code
-func (r PlatformResponse) RenderFailure(data ...interface{}) iris.Map {
-	json := iris.Map{
+func (r PlatformResponse) RenderFailure(data ...interface{}) gin.H {
+	json := gin.H{
 		"code":    404,
 		"message": "error",
 	}

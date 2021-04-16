@@ -1,11 +1,11 @@
 package controllers
 
 import (
-	"github.com/kataras/iris/v12"
+	"github.com/gin-gonic/gin"
 )
 
-func Index(ctx iris.Context) {
-	ctx.JSON(iris.Map{
+func Index(ctx *gin.Context) {
+	ctx.JSON(200, gin.H{
 		"hh": "hh",
 	})
 }

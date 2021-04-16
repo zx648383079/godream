@@ -1,19 +1,19 @@
 package auth
 
 import (
-	"zodream/modules/auth/controllers"
-	"zodream/modules/auth/controllers/api"
-
-	"github.com/kataras/iris/v12"
+	"github.com/gin-gonic/gin"
+	"zodream.cn/godream/modules/auth/controllers"
+	"zodream.cn/godream/modules/auth/controllers/api"
 )
 
 // Register 注册路由
-func Register(app iris.Party) {
-	app.Get("/", controllers.Index)
-	app.Post("/login", controllers.Login)
+func Register(app *gin.RouterGroup) {
+	app.GET("/", controllers.Index)
+	app.POST("/login", controllers.Login)
 }
 
 // RegisterAPI 注册api路由
-func RegisterAPI(app iris.Party) {
-	app.Get("/", api.Index)
+func RegisterAPI(app *gin.RouterGroup) {
+	app.GET("", api.Index)
+	app.GET("/", api.Index)
 }

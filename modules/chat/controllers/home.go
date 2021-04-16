@@ -1,11 +1,8 @@
 package controllers
 
-import (
-	"github.com/kataras/iris/v12"
-)
+import "github.com/gin-gonic/gin"
 
 // Index 显示页面
-func Index(ctx iris.Context) {
-	ctx.ViewLayout(iris.NoLayout)
-	ctx.View("chat/index.html")
+func Index(ctx *gin.Context) {
+	ctx.HTML(200, "chat/index.html", gin.H{})
 }

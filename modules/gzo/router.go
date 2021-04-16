@@ -1,11 +1,10 @@
 package gzo
 
 import (
-	"zodream/modules/gzo/controllers"
-
-	"github.com/kataras/iris/v12"
+	"github.com/gin-gonic/gin"
+	"zodream.cn/godream/modules/gzo/controllers"
 )
 
-func Register(app iris.Party) {
-	app.Get("/", controllers.Index)
+func Register(app *gin.RouterGroup) {
+	app.GET("/", controllers.Index)
 }

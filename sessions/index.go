@@ -1,11 +1,16 @@
 package sessions
 
 import (
-	"github.com/kataras/iris/v12/sessions"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
+	"github.com/gin-gonic/gin"
 )
 
 var (
 	cookieNameForSessionID = "zodream"
-	// Driver session 使用
-	Driver = sessions.New(sessions.Config{Cookie: cookieNameForSessionID})
 )
+
+func New() gin.HandlerFunc {
+	store := cookie.NewStore([]byte("secret"))
+	return sessions.Sessions(cookieNameForSessionID, store)
+}

@@ -2,8 +2,9 @@ package models
 
 import (
 	"errors"
-	"zodream/database"
-	"zodream/utils"
+
+	"zodream.cn/godream/database"
+	"zodream.cn/godream/utils"
 
 	"github.com/asaskevich/govalidator"
 )

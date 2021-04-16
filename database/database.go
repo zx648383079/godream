@@ -3,7 +3,7 @@ package database
 import (
 	"fmt"
 
-	"zodream/configs"
+	"zodream.cn/godream/configs"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -17,14 +17,14 @@ var DB *gorm.DB
 /*
  * 设置数据库连接
  */
-func New() *gorm.DB {
+func InitDb() error {
 	url := fmt.Sprintf("%s:%s@/%s?charset=utf8&parseTime=True&loc=Local", configs.Config.Db.User, configs.Config.Db.Password, configs.Config.Db.Schema)
 
 	db, err := gorm.Open(configs.Config.Db.Driver, url)
 	if err != nil {
 		panic(fmt.Sprintf("No error should happen when connecting to  database, but got err=%+v", err))
-		return nil
+		return err
 	}
 	DB = db
-	return db
+	return nil
 }

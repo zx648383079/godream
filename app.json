@@ -3,10 +3,13 @@
     "port": "8080",
     "favicon": "../PHP-ZoDream/html/favicon.ico",
     "asset": "../PHP-ZoDream/html/assets",
-    "view": "./templates",
+    "view": "templates/**/*",
     "db": {
         "user": "root",
         "password": "root",
         "schema": "zodream"
+    },
+    "auth": {
+        "key": "uZXUa9ssSS5nr1lWvjTSwYhVxBxNsAyj"
     }
 }

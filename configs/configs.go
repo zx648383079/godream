@@ -22,6 +22,9 @@ var Config = struct {
 		Password string `default:""`
 		Schema   string
 	}
+	Auth struct {
+		Key string `default:"zodream cn"`
+	}
 }{}
 
 // Init 配置初始化

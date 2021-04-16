@@ -1,15 +1,13 @@
 package middleware
 
 import (
-	"zodream/modules/open/platform"
+	"zodream.cn/godream/modules/open/platform"
 
-	"github.com/kataras/iris/v12"
-
-	"github.com/kataras/iris/v12/context"
+	"github.com/gin-gonic/gin"
 )
 
 // REST RESTful
-var REST context.Handler
+var REST gin.HandlerFunc
 
 // RESTful rest 代码
 type RESTful struct {
@@ -22,31 +20,25 @@ func New() *RESTful {
 }
 
 // Serve 执行
-func (rest *RESTful) Serve(ctx context.Context) {
-	appid := ctx.URLParam("appid")
+func (rest *RESTful) Serve(ctx *gin.Context) {
+	appid := ctx.GetString("appid")
 	json := new(platform.PlatformResponse)
 	api, err := platform.NewPlatform(appid)
 	if err != nil {
-		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON(json.RenderFailure(err.Error()))
-		ctx.StopExecution()
+		ctx.AbortWithStatusJSON(400, json.RenderFailure(err.Error()))
 		return
 	}
-	if !api.VerifyRule(ctx.Path()) {
-		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON(json.RenderFailure(err.Error()))
-		ctx.StopExecution()
+	if !api.VerifyRule(ctx.FullPath()) {
+		ctx.AbortWithStatusJSON(400, json.RenderFailure(err.Error()))
 		return
 	}
 	err = api.Verify(ctx)
 	if err != nil {
-		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON(json.RenderFailure(err.Error()))
-		ctx.StopExecution()
+		ctx.AbortWithStatusJSON(400, json.RenderFailure(err.Error()))
 		return
 	}
 	json.Platform = api
-	ctx.Values().Set("json", json)
+	ctx.Keys["json"] = json
 	ctx.Next()
 }
 

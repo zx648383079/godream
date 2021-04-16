@@ -1,9 +1,9 @@
 package dao
 
 import (
-	"zodream/database"
-	"zodream/modules/blog/models"
-	"zodream/utils"
+	"zodream.cn/godream/database"
+	"zodream.cn/godream/modules/blog/models"
+	"zodream.cn/godream/utils"
 )
 
 // GetBlogList 获取分页

@@ -1,21 +1,16 @@
 package open
 
 import (
-	"zodream/modules/auth"
-	"zodream/modules/open/controllers"
-	"zodream/modules/open/middleware"
+	"github.com/gin-gonic/gin"
+	"zodream.cn/godream/modules/open/controllers"
+)
 
-	"github.com/kataras/iris/v12"
+type (
+	GroupFunc    = func(app *gin.RouterGroup)
+	GroupFuncMap = map[string]GroupFunc
 )
 
 // Register 注册路由
-func Register(app iris.Party) {
-	app.Get("/", controllers.Index)
-	app.Use(middleware.REST, middleware.CORS)
-	{
-		app.PartyFunc("/auth", auth.RegisterAPI)
-		// app.PartyFunc("/chat", chat.RegisterAPI)
-		// app.PartyFunc("/shop", shop.RegisterAPI)
-	}
-
+func Register(app *gin.RouterGroup) {
+	app.GET("/", controllers.Index)
 }

@@ -1,17 +1,22 @@
 package middleware
 
 import (
-	"github.com/iris-contrib/middleware/cors"
-	"github.com/kataras/iris/v12/context"
+	"time"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
 // CORS CORS Handler
-var CORS context.Handler
+var CORS gin.HandlerFunc
 
 func initCORS() {
-	CORS = cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"}, // Allows everything, use that to change the hosts.
+	CORS = cors.New(cors.Config{
+		AllowAllOrigins:  true,
+		AllowMethods:     []string{"GET", "PUT", "POST", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"x-xq5-jwt", "Content-Type", "Origin", "Content-Length"},
+		ExposeHeaders:    []string{"x-xq5-jwt"},
 		AllowCredentials: true,
-		AllowedHeaders:   []string{"*"}, // If do not set this will not be able to customize the header.
+		MaxAge:           12 * time.Hour,
 	})
 }
