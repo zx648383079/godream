@@ -7,4 +7,6 @@ import (
 
 func Register(app *gin.RouterGroup) {
 	app.GET("/", controllers.Index)
+	app.GET("/sql/table", controllers.SqlTable)
+	app.POST("/template/model", controllers.TplModel)
 }

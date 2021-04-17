@@ -28,7 +28,7 @@ func (r PlatformResponse) RenderData(data ...interface{}) gin.H {
 }
 
 // RenderPage 响应分页
-func (r PlatformResponse) RenderPage(data []interface{}, page utils.Pager) gin.H {
+func (r PlatformResponse) RenderPage(data interface{}, page *utils.Pager) gin.H {
 	json := gin.H{
 		"data": data,
 		"paging": gin.H{

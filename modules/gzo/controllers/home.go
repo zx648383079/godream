@@ -5,7 +5,5 @@ import (
 )
 
 func Index(ctx *gin.Context) {
-	ctx.JSON(200, gin.H{
-		"hh": "hh",
-	})
+	ctx.HTML(200, "gzo-model.html", gin.H{})
 }

@@ -3,7 +3,9 @@ package controllers
 import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"zodream.cn/godream/modules/auth/dao"
 	"zodream.cn/godream/modules/auth/models"
+	"zodream.cn/godream/utils/response"
 )
 
 // LoginForm 登录表单
@@ -21,14 +23,15 @@ func Index(ctx *gin.Context) {
 // Login 登录
 func Login(ctx *gin.Context) {
 	session := sessions.Default(ctx)
-	user, err := models.LoginEmail(ctx.PostForm("email"), ctx.PostForm("password"))
+	json := ctx.Keys["json"].(response.IJsonResponse)
+	var form models.LoginEmail
+	if err := ctx.ShouldBind(&form); err != nil {
+		ctx.JSON(200, json.RenderFailure(err))
+	}
+	user, err := dao.LoginEmail(form)
 	if err == nil {
 		session.Set("userID", user.ID)
 		session.Save()
 	}
-	ctx.JSON(200, gin.H{
-		"code": 200,
-		"data": user,
-		"err":  err,
-	})
+	ctx.JSON(200, json.RenderData(user))
 }

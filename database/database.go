@@ -5,8 +5,8 @@ import (
 
 	"zodream.cn/godream/configs"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 /*
@@ -20,7 +20,7 @@ var DB *gorm.DB
 func InitDb() error {
 	url := fmt.Sprintf("%s:%s@/%s?charset=utf8&parseTime=True&loc=Local", configs.Config.Db.User, configs.Config.Db.Password, configs.Config.Db.Schema)
 
-	db, err := gorm.Open(configs.Config.Db.Driver, url)
+	db, err := gorm.Open(mysql.Open(url), &gorm.Config{})
 	if err != nil {
 		panic(fmt.Sprintf("No error should happen when connecting to  database, but got err=%+v", err))
 		return err

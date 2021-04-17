@@ -1,22 +1,33 @@
 package utils
 
 type Pager struct {
-	Current   int
-	Size      int
-	Total     int
-	Pages     int
-	PageSlice []int
-	Begin     int
-	End       int
-	Prev      int
-	Next      int
+	Current   uint
+	Size      uint
+	Total     uint
+	Pages     uint
+	PageItems []uint
+	Begin     uint
+	End       uint
+	Prev      uint
+	Next      uint
 	IsPrev    bool
 	IsNext    bool
 }
 
-func NewPager(page, size, total int) *Pager {
+func (p Pager) Limit() int {
+	return int(p.Size)
+}
+
+func (p Pager) Offset() int {
+	return int(p.Begin) - 1
+}
+
+func NewPager(page, size uint, total uint) *Pager {
 	if page < 1 {
 		page = 1
+	}
+	if size < 1 {
+		size = 20
 	}
 	p := new(Pager)
 	p.Current = page
@@ -26,9 +37,10 @@ func NewPager(page, size, total int) *Pager {
 	if total%size > 0 {
 		p.Pages++
 	}
-	p.PageSlice = make([]int, p.Pages)
-	for i := 1; i <= p.Pages; i++ {
-		p.PageSlice[i-1] = i
+	p.PageItems = make([]uint, p.Pages)
+	var i uint
+	for i = 1; i <= p.Pages; i++ {
+		p.PageItems[i-1] = i
 	}
 	p.Begin = (page-1)*size + 1
 	if p.Begin < 1 {

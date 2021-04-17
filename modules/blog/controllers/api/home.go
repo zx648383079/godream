@@ -1,18 +1,16 @@
-package controllers
+package api
 
 import (
 	"github.com/gin-gonic/gin"
 	"zodream.cn/godream/modules/blog/dao"
 	"zodream.cn/godream/modules/blog/models"
+	"zodream.cn/godream/utils/response"
 )
 
-// Index 显示页面
-func Index(ctx *gin.Context) {
+func BlogPage(c *gin.Context) {
 	var queries models.BlogQueries
-	ctx.ShouldBindQuery(queries)
+	c.ShouldBindQuery(queries)
 	items, pager, _ := dao.GetBlogList(&queries)
-	ctx.HTML(200, "blog/index.html", gin.H{
-		"items": &items,
-		"pager": &pager,
-	})
+	api := c.Keys["json"].(response.IJsonResponse)
+	c.JSON(200, api.RenderPage(items, pager))
 }

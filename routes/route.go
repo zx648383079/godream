@@ -1,10 +1,9 @@
 package routes
 
 import (
-	"os"
-
 	"github.com/gin-gonic/gin"
 
+	"zodream.cn/godream/configs"
 	"zodream.cn/godream/controllers"
 	"zodream.cn/godream/modules/auth"
 	"zodream.cn/godream/modules/blog"
@@ -28,7 +27,7 @@ func Register(app *gin.Engine) {
 		"/blog": blog.Register,
 		"/chat": chat.Register,
 	}
-	if os.Getenv("DEBUG") == "true" {
+	if configs.Config.Debug {
 		routes["/gzo"] = gzo.Register
 	}
 	for path, v := range routes {

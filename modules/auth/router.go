@@ -14,6 +14,5 @@ func Register(app *gin.RouterGroup) {
 
 // RegisterAPI 注册api路由
 func RegisterAPI(app *gin.RouterGroup) {
-	app.GET("", api.Index)
-	app.GET("/", api.Index)
+	app.POST("/login", api.Login)
 }
