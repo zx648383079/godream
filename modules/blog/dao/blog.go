@@ -2,6 +2,7 @@ package dao
 
 import (
 	"zodream.cn/godream/database"
+	"zodream.cn/godream/modules/blog/entities"
 	"zodream.cn/godream/modules/blog/models"
 	"zodream.cn/godream/utils"
 )
@@ -19,4 +20,18 @@ func GetBlogList(queies *models.BlogQueries) ([]*models.BlogPageItem, *utils.Pag
 		print(smt.SQL.String())
 	}
 	return items, pager, nil
+}
+
+func GetBlogFull(id int) (map[string]interface{}, error) {
+	data := map[string]interface{}{}
+	err := database.DB.Model(&models.BlogPageItem{}).Where("id=?", id).First(&data).Error
+	if err != nil {
+		return data, err
+	}
+	var metaItems []*entities.BlogMeta
+	database.DB.Where("blog_id=?", id).Find(&metaItems)
+	for _, v := range metaItems {
+		data[v.Name] = v.Content
+	}
+	return data, nil
 }

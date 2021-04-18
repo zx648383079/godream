@@ -12,4 +12,7 @@ func Register(app *gin.RouterGroup) {
 
 func RegisterAPI(app *gin.RouterGroup) {
 	app.GET("", api.BlogPage)
+	app.GET("tag", api.TagList)
+	app.GET("category", api.TermList)
+	app.GET("archives", api.ArchivesList)
 }
