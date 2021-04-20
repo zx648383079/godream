@@ -4,5 +4,4 @@ package models
 type Table struct {
 	Name    string
 	Comment string
-	Columns []*Column
 }

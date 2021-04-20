@@ -2,12 +2,12 @@ package models
 
 type (
 	Archives struct {
-		Year  uint
-		Items []*ArchivesItem
+		Year  uint            `json:"year"`
+		Items []*ArchivesItem `json:"items"`
 	}
 	ArchivesItem struct {
-		Month string
-		Title string
-		ID    uint
+		Month string `json:"month"`
+		Title string `json:"title"`
+		ID    uint   `json:"id"`
 	}
 )

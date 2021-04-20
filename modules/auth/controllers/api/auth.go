@@ -15,12 +15,14 @@ import (
 func Login(ctx *gin.Context) {
 	api := ctx.Keys["json"].(response.IJsonResponse)
 	var form models.LoginEmail
-	if err := ctx.ShouldBind(&form); err != nil {
+	if err := ctx.BindJSON(&form); err != nil {
 		ctx.JSON(400, api.RenderFailure(err))
+		return
 	}
 	user, err := dao.LoginEmail(form)
 	if err != nil {
 		ctx.JSON(400, api.RenderFailure(err))
+		return
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": user.ID,

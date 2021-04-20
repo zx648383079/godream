@@ -30,7 +30,7 @@ func Login(ctx *gin.Context) {
 	}
 	user, err := dao.LoginEmail(form)
 	if err == nil {
-		session.Set("userID", user.ID)
+		session.Set("user_id", user.ID)
 		session.Save()
 	}
 	ctx.JSON(200, json.RenderData(user))

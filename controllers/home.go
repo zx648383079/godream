@@ -22,7 +22,7 @@ func FriendLink(ctx *gin.Context) {
 
 // To 跳转到外部链接
 func To(ctx *gin.Context) {
-	uri := ctx.GetString("url")
+	uri := ctx.Query("url")
 	if uri != "" {
 		uri = utils.Base64Decode(uri + "=")
 	}

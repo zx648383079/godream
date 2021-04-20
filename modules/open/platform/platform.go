@@ -85,7 +85,7 @@ func (app Platform) Verify(ctx *gin.Context) error {
 	if err != nil {
 		return err
 	}
-	if sign == ctx.GetString("sign") {
+	if sign == ctx.Query("sign") {
 		return nil
 	}
 	return fmt.Errorf("sign verify error")
@@ -109,13 +109,13 @@ func (app Platform) Sign(ctx *gin.Context) (string, error) {
 func (app Platform) getSignContent(ctx *gin.Context) (string, error) {
 	if app.model.SignKey == "" {
 		var keys []string
-		for _, v := range ctx.Params {
-			keys = append(keys, v.Key)
+		for k := range ctx.Request.URL.Query() {
+			keys = append(keys, k)
 		}
 		sort.Strings(keys)
 		var b strings.Builder
 		for _, k := range keys {
-			b.WriteString(ctx.GetString(k))
+			b.WriteString(ctx.Query(k))
 		}
 		b.WriteString(app.model.Secret)
 		return b.String(), nil
@@ -135,7 +135,7 @@ func (app Platform) getSignContent(ctx *gin.Context) (string, error) {
 			b.WriteString("+")
 			continue
 		}
-		if val, err := ctx.Params.Get(k); err {
+		if val, err := ctx.GetQuery(k); err {
 			b.WriteString(val)
 			continue
 		}

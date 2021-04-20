@@ -3,10 +3,10 @@ package models
 import "zodream.cn/godream/modules/auth/entities"
 
 type LoginEmail struct {
-	Email    string
-	Password string
-	Code     string
-	Remember bool
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	Code     string `json:"code"`
+	Remember bool   `json:"remember"`
 }
 
 type LoginMobile struct {

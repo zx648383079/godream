@@ -21,23 +21,23 @@ func New() *RESTful {
 
 // Serve 执行
 func (rest *RESTful) Serve(ctx *gin.Context) {
-	// appid := ctx.GetString("appid")
+	appid := ctx.Query("appid")
 	json := new(platform.PlatformResponse)
-	// api, err := platform.NewPlatform(appid)
-	// if err != nil {
-	// 	ctx.AbortWithStatusJSON(400, json.RenderFailure(err.Error()))
-	// 	return
-	// }
-	// if !api.VerifyRule(ctx.FullPath()) {
-	// 	ctx.AbortWithStatusJSON(400, json.RenderFailure(err.Error()))
-	// 	return
-	// }
-	// err = api.Verify(ctx)
-	// if err != nil {
-	// 	ctx.AbortWithStatusJSON(400, json.RenderFailure(err.Error()))
-	// 	return
-	// }
-	// json.Platform = api
+	api, err := platform.NewPlatform(appid)
+	if err != nil {
+		ctx.AbortWithStatusJSON(400, json.RenderFailure(err.Error()))
+		return
+	}
+	if !api.VerifyRule(ctx.FullPath()) {
+		ctx.AbortWithStatusJSON(400, json.RenderFailure(err.Error()))
+		return
+	}
+	err = api.Verify(ctx)
+	if err != nil {
+		ctx.AbortWithStatusJSON(400, json.RenderFailure(err.Error()))
+		return
+	}
+	json.Platform = api
 	ctx.Keys["json"] = json
 	ctx.Next()
 }

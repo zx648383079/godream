@@ -31,5 +31,5 @@ func BlogDetail(c *gin.Context) {
 		c.JSON(400, api.RenderFailure(err))
 		return
 	}
-	c.JSON(400, api.Render(data))
+	c.JSON(200, api.Render(data))
 }

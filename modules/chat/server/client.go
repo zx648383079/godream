@@ -1,7 +1,7 @@
 package server
 
 import (
-	"bytes"
+	"encoding/json"
 	"fmt"
 	"log"
 
@@ -9,6 +9,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"zodream.cn/godream/modules/chat/dao"
+	"zodream.cn/godream/modules/chat/models"
 
 	"github.com/gorilla/websocket"
 )
@@ -27,11 +29,6 @@ const (
 	maxMessageSize = 512
 )
 
-var (
-	newline = []byte{'\n'}
-	space   = []byte{' '}
-)
-
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
@@ -47,10 +44,14 @@ type Client struct {
 	// Buffered channel of outbound messages.
 	send chan []byte
 
-	// 用户名称
-	username []byte
-	// 房间号
-	roomID []byte
+	// 用户id
+	userId uint
+
+	// 房间类型 0 为单用户 1 为群
+	roomType uint32
+
+	// 房间的id 用户id 或 群id
+	roomId uint
 }
 
 // readPump pumps messages from the websocket connection to the hub.
@@ -67,17 +68,21 @@ func (c *Client) readPump() {
 	c.conn.SetReadDeadline(time.Now().Add(pongWait))
 	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 	for {
-		_, message, err := c.conn.ReadMessage()
+		_, content, err := c.conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				log.Printf("error: %v", err)
 			}
 			break
 		}
-		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
-		message = []byte(string(c.roomID) + "&" + string(c.username) + ":" + string(message))
-		fmt.Println(string(message))
-		c.hub.broadcast <- []byte(message)
+		event, _, message := decodeMessage(string(content))
+		if event == EVENT_MESSAGE_SEND_TEXT {
+			var form models.MssageForm
+			json.Unmarshal([]byte(message), &form)
+			messageModel, _ := dao.SendText(c.userId, form.ItemType, form.ItemId, form.Content)
+			c.hub.broadcast <- messageModel
+			continue
+		}
 	}
 }
 
@@ -135,24 +140,9 @@ func (c *Client) writePump() {
 	}
 }
 
-// ChatRequest 聊天室请求
-type ChatRequest struct {
-	RoomID   string `json:"room_id" form:"room_id"`
-	UserID   int    `json:"user_id" form:"user_id"`
-	UserName string `json:"user_name" form:"user_name"`
-}
-
 // ServeWs handles websocket requests from the peer.
 func ServeWs(hub *Hub, c *gin.Context) {
-	// 获取前端数据
-	var req ChatRequest
-	if err := c.ShouldBind(&req); err != nil {
-		log.Printf("ServeWs err:%v\n", err)
-		c.JSON(http.StatusOK, gin.H{"errno": "-1", "errmsg": "参数不匹配，请重试"})
-		return
-	}
-	userName := req.UserName
-	roomID := req.RoomID
+	userId := c.GetInt("user_id")
 	// 获取redis连接(暂未使用)
 	// pool := c.MustGet("test").(*redis.Pool)
 	// redisConn := pool.Get()
@@ -169,8 +159,8 @@ func ServeWs(hub *Hub, c *gin.Context) {
 		log.Println(err)
 		return
 	}
-	fmt.Println(userName)
-	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256), username: []byte(userName), roomID: []byte(roomID)}
+	fmt.Printf("user [%d] enter chat room\n", userId)
+	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256), userId: uint(userId)}
 	client.hub.register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in

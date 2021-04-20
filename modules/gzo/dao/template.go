@@ -11,7 +11,7 @@ func RenderModel(table string) string {
 	if table == "" {
 		return ""
 	}
-	model := GetTable(table)
+	model, columns := GetTable(table)
 	if model.Name == "" {
 		return ""
 	}
@@ -25,7 +25,7 @@ func RenderModel(table string) string {
 	builder.WriteString("Model\ntype ")
 	builder.WriteString(name)
 	builder.WriteString(" struct {\n")
-	for _, column := range model.Columns {
+	for _, column := range columns {
 		print(column.DataType)
 		renderField(&builder, column)
 	}

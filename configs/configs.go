@@ -25,6 +25,9 @@ var Config = struct {
 	Auth struct {
 		Key string `default:"zodream cn"`
 	}
+	Route struct {
+		Deeplink string `default:"zodream"`
+	}
 }{}
 
 // Init 配置初始化

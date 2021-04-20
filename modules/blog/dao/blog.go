@@ -33,5 +33,6 @@ func GetBlogFull(id int) (map[string]interface{}, error) {
 	for _, v := range metaItems {
 		data[v.Name] = v.Content
 	}
+	data["content"] = string(data["content"].([]uint8))
 	return data, nil
 }

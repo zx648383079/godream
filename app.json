@@ -11,5 +11,8 @@
     },
     "auth": {
         "key": "uZXUa9ssSS5nr1lWvjTSwYhVxBxNsAyj"
+    },
+    "route": {
+        "deeplink": "zodream"
     }
 }

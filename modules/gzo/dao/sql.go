@@ -14,11 +14,10 @@ func GetTables() []string {
 	return tables
 }
 
-func GetTable(table string) *models.Table {
+func GetTable(table string) (*models.Table, []*models.Column) {
 	var item models.Table
 	database.DB.Raw("select table_name as name, table_comment as comment from information_schema.tables where table_schema=database() and table_name=?", table).Scan(&item)
-	item.Columns = GetColumns(table)
-	return &item
+	return &item, GetColumns(table)
 }
 
 // GetColumns 获取表的列

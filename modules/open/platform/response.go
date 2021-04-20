@@ -51,7 +51,16 @@ func (r PlatformResponse) RenderFailure(data ...interface{}) gin.H {
 		json["code"] = data[1]
 	}
 	if len(data) > 0 {
-		json["message"] = data[0]
+		json["message"] = formatStr(data[0])
 	}
 	return r.Render(json)
+}
+
+func formatStr(v interface{}) string {
+	switch v := v.(type) {
+	case string:
+		return v
+	default:
+		return v.(error).Error()
+	}
 }
