@@ -5,11 +5,11 @@ import (
 )
 
 type FriendGroup struct {
-	ID     uint
-	Name   string
-	Count  uint
-	Online uint
-	Users  []*Friend
+	ID     uint      `json:"id"`
+	Name   string    `json:"name"`
+	Count  uint      `json:"count"`
+	Online uint      `json:"online"`
+	Users  []*Friend `json:"users"`
 }
 
 type Friend struct {

@@ -7,8 +7,8 @@ import (
 
 type HistoryItem struct {
 	entities.History
-	User    *auth_models.UserSimple
-	Friend  *FriendSample
-	Group   *Group
-	Message *MessageSimple
+	User    *auth_models.UserSimple `json:"user"`
+	Friend  *FriendSample           `json:"friend"`
+	Group   *Group                  `json:"group"`
+	Message *MessageSimple          `json:"message"`
 }

@@ -27,7 +27,10 @@ const (
 	RULE_VOICE_TAG = "[语音]"
 )
 
-func GetMessageList(user uint, startTime uint, itemType uint, itemId uint) []*models.MessageItem {
+func GetMessageList(user uint, startTime uint, itemType uint32, itemId uint) []*models.MessageItem {
+	if itemId < 1 {
+		return nil
+	}
 	var data []*entities.Message
 	var query *gorm.DB
 	if itemType > 0 {
@@ -84,8 +87,35 @@ func GetMessageList(user uint, startTime uint, itemType uint, itemId uint) []*mo
 	return items
 }
 
-func GetPing(user int, startTime uint, itemType uint, itemId uint) {
+func GetPing(user uint, startTime uint, itemType uint32, itemId uint) map[string]interface{} {
+	query := database.DB.Model(&entities.Message{}).Where("receive_id=?", user).Where("status=0")
+	if startTime > 0 {
+		query.Where("created_at>=?", startTime)
+	}
+	var messageCount int64
+	query.Count(&messageCount)
+	var applyCount int64
+	q := database.DB.Model(&entities.Apply{}).Where("item_id=?", user).Where("item_type=0").Where("status=0")
+	if startTime > 0 {
+		query.Where("created_at>=?", startTime)
+	}
+	q.Count(&applyCount)
+	return map[string]interface{}{
+		"message_count": messageCount,
+		"apply_count":   applyCount,
+		"data":          GetMessageList(user, startTime, itemType, itemId),
+		"next_time":     utils.Now() + 1,
+	}
+}
 
+func RevokeMessage(user uint, id uint) error {
+	var model entities.Message
+	database.DB.Where("user_id=?", user).First(&model, id)
+	if model.ID < 1 {
+		return errors.New("消息错误")
+	}
+	database.DB.Delete(model)
+	return nil
 }
 
 func SendText(user uint, itemType uint, itemId uint, content string) (*models.MessageItem, error) {
@@ -114,16 +144,24 @@ func SendVoice(user uint, itemType uint, itemId uint, file string) (*models.Mess
 }
 
 func Send(user uint, itemType uint, itemId uint, messageType uint32, content string, extraRule []rule.RuleItem) (*models.MessageItem, error) {
+	if itemId < 1 {
+		return nil, errors.New("接受人错误")
+	}
 	if itemType < 1 && user == itemId {
 		return nil, errors.New("不能自己发送给自己")
 	}
-	ruleByte, _ := json.Marshal(extraRule)
+	ruleStr := "[]"
+	if len(extraRule) > 0 {
+		ruleByte, _ := json.Marshal(extraRule)
+		ruleStr = string(ruleByte)
+	}
+
 	now := uint(utils.Now())
 	model := entities.Message{
 		Type:      messageType,
 		Content:   content,
 		UserId:    user,
-		ExtraRule: string(ruleByte),
+		ExtraRule: ruleStr,
 		UpdatedAt: now,
 		CreatedAt: now,
 	}
@@ -141,7 +179,7 @@ func Send(user uint, itemType uint, itemId uint, messageType uint32, content str
 		addHistory(itemId, itemType, user, model.ID, 1)
 	}
 	var userModel auth_models.UserSimple
-	database.DB.First(&user, user)
+	database.DB.First(&userModel, user)
 	return &models.MessageItem{
 		Message: model,
 		User:    &userModel,

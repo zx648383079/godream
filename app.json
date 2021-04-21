@@ -3,6 +3,7 @@
     "port": "8080",
     "favicon": "../PHP-ZoDream/html/favicon.ico",
     "asset": "../PHP-ZoDream/html/assets",
+    "upload": "upload",
     "view": "templates/**/*",
     "db": {
         "user": "root",

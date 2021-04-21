@@ -1,4 +1,4 @@
-package utils
+package pagination
 
 type Pager struct {
 	Current   uint
@@ -22,7 +22,7 @@ func (p Pager) Offset() int {
 	return int(p.Begin) - 1
 }
 
-func NewPager(page, size uint, total uint) *Pager {
+func New(page, size uint, total uint) *Pager {
 	if page < 1 {
 		page = 1
 	}

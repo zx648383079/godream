@@ -1,7 +1,6 @@
 package server
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 
@@ -9,8 +8,11 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"zodream.cn/godream/configs"
 	"zodream.cn/godream/modules/chat/dao"
 	"zodream.cn/godream/modules/chat/models"
+	"zodream.cn/godream/modules/open/middleware"
+	"zodream.cn/godream/utils/upload"
 
 	"github.com/gorilla/websocket"
 )
@@ -26,7 +28,7 @@ const (
 	pingPeriod = (pongWait * 9) / 10
 
 	// Maximum message size allowed from peer.
-	maxMessageSize = 512
+	maxMessageSize = 1024 * 256 * 2
 )
 
 var upgrader = websocket.Upgrader{
@@ -70,18 +72,132 @@ func (c *Client) readPump() {
 	for {
 		_, content, err := c.conn.ReadMessage()
 		if err != nil {
+			fmt.Println(err.Error())
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				log.Printf("error: %v", err)
 			}
 			break
 		}
 		event, _, message := decodeMessage(string(content))
-		if event == EVENT_MESSAGE_SEND_TEXT {
-			var form models.MssageForm
-			json.Unmarshal([]byte(message), &form)
-			messageModel, _ := dao.SendText(c.userId, form.ItemType, form.ItemId, form.Content)
-			c.hub.broadcast <- messageModel
-			continue
+		fmt.Println("[chat event]" + event)
+		hanleFuncMap := map[string]func(string){
+			EVENT_AUTH: func(s string) {
+				c.userId = middleware.JWTTokenUser(s)
+				if c.userId < 1 {
+					c.hub.unregister <- c
+					c.conn.Close()
+					return
+				}
+			},
+			EVENT_MESSAGE_SEND_TEXT: func(s string) {
+				var form models.MssageForm
+				decodeJSON(s, &form)
+				messageModel, err := dao.SendText(c.userId, form.ItemType, form.ItemId, form.Content)
+				if err != nil {
+					c.send <- encodeByte(EVENT_ERROR, MESSAGE_TYPE_STRING, []byte(err.Error()))
+					return
+				}
+				c.hub.broadcast <- messageModel
+			},
+			EVENT_MESSAGE_SEND_IMAGE: func(s string) {
+				var form models.MssageForm
+				err := decodeJSON(s, &form)
+				if err != nil {
+					c.send <- encodeByte(EVENT_ERROR, MESSAGE_TYPE_STRING, []byte(err.Error()))
+					return
+				}
+				file, url := configs.UploadRandomFileName(form.FileName)
+				if err := upload.SaveBase64(form.File, file); err != nil {
+					c.send <- encodeByte(EVENT_ERROR, MESSAGE_TYPE_STRING, []byte(err.Error()))
+					return
+				}
+				messageModel, err := dao.SendImage(c.userId, form.ItemType, form.ItemId, url)
+				if err != nil {
+					c.send <- encodeByte(EVENT_ERROR, MESSAGE_TYPE_STRING, []byte(err.Error()))
+					return
+				}
+				c.hub.broadcast <- messageModel
+			},
+			EVENT_MESSAGE_SEND_VIDEO: func(s string) {
+				var form models.MssageForm
+				decodeJSON(s, &form)
+				file, url := configs.UploadRandomFileName(form.FileName)
+				if err := upload.SaveBase64(form.File, file); err != nil {
+					c.send <- encodeByte(EVENT_ERROR, MESSAGE_TYPE_STRING, []byte(err.Error()))
+					return
+				}
+				messageModel, err := dao.SendVideo(c.userId, form.ItemType, form.ItemId, url)
+				if err != nil {
+					c.send <- encodeByte(EVENT_ERROR, MESSAGE_TYPE_STRING, []byte(err.Error()))
+					return
+				}
+				c.hub.broadcast <- messageModel
+			},
+			EVENT_MESSAGE_SEND_AUDIO: func(s string) {
+				var form models.MssageForm
+				decodeJSON(s, &form)
+				file, url := configs.UploadRandomFileName(form.FileName)
+				if err := upload.SaveBase64(form.File, file); err != nil {
+					c.send <- encodeByte(EVENT_ERROR, MESSAGE_TYPE_STRING, []byte(err.Error()))
+					return
+				}
+				messageModel, err := dao.SendVoice(c.userId, form.ItemType, form.ItemId, url)
+				if err != nil {
+					c.send <- encodeByte(EVENT_ERROR, MESSAGE_TYPE_STRING, []byte(err.Error()))
+					return
+				}
+				c.hub.broadcast <- messageModel
+			},
+			EVENT_MESSAGE_SEND_FILE: func(s string) {
+				var form models.MssageForm
+				decodeJSON(s, &form)
+				file, url := configs.UploadRandomFileName(form.FileName)
+				if err := upload.SaveBase64(form.File, file); err != nil {
+					c.send <- encodeByte(EVENT_ERROR, MESSAGE_TYPE_STRING, []byte(err.Error()))
+					return
+				}
+				messageModel, err := dao.SendFile(c.userId, form.ItemType, form.ItemId, form.FileName, url)
+				if err != nil {
+					c.send <- encodeByte(EVENT_ERROR, MESSAGE_TYPE_STRING, []byte(err.Error()))
+					return
+				}
+				c.hub.broadcast <- messageModel
+			},
+			EVENT_PROFILE: func(s string) {
+				profile := dao.GetProfile(c.userId)
+				c.send <- encodeJSON(EVENT_PROFILE, profile)
+			},
+			EVENT_HISTORY: func(s string) {
+				data := dao.GetHistories(c.userId)
+				c.send <- encodeJSON(EVENT_HISTORY, gin.H{
+					"data": data,
+				})
+			},
+			EVENT_FRIENDS: func(s string) {
+				data := dao.GetFriendList(c.userId)
+				c.send <- encodeJSON(EVENT_FRIENDS, gin.H{
+					"data": data,
+				})
+			},
+			EVENT_GROUPS: func(s string) {
+				data := dao.GetGroupList(c.userId)
+				c.send <- encodeJSON(EVENT_GROUPS, gin.H{
+					"data": data,
+				})
+			},
+			EVENT_MESSAGE: func(s string) {
+				var query models.MssageQuery
+				decodeJSON(s, &query)
+				c.roomType = query.ItemType
+				c.roomId = query.ItemId
+				data := dao.GetMessageList(c.userId, query.StartTime, query.ItemType, query.ItemId)
+				c.send <- encodeJSON(EVENT_MESSAGE, gin.H{
+					"data": data,
+				})
+			},
+		}
+		if hanleFunc, ok := hanleFuncMap[event]; ok {
+			hanleFunc(message)
 		}
 	}
 }
@@ -142,13 +258,14 @@ func (c *Client) writePump() {
 
 // ServeWs handles websocket requests from the peer.
 func ServeWs(hub *Hub, c *gin.Context) {
-	userId := c.GetInt("user_id")
 	// 获取redis连接(暂未使用)
 	// pool := c.MustGet("test").(*redis.Pool)
 	// redisConn := pool.Get()
 	// defer redisConn.Close()
 	// 将网络请求变为websocket
 	var upgrader = websocket.Upgrader{
+		ReadBufferSize:  maxMessageSize,
+		WriteBufferSize: maxMessageSize,
 		// 解决跨域问题
 		CheckOrigin: func(r *http.Request) bool {
 			return true
@@ -159,8 +276,7 @@ func ServeWs(hub *Hub, c *gin.Context) {
 		log.Println(err)
 		return
 	}
-	fmt.Printf("user [%d] enter chat room\n", userId)
-	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256), userId: uint(userId)}
+	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256), userId: 0}
 	client.hub.register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in

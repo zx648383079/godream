@@ -2,7 +2,7 @@ package platform
 
 import (
 	"github.com/gin-gonic/gin"
-	"zodream.cn/godream/utils"
+	"zodream.cn/godream/utils/pagination"
 )
 
 // PlatformResponse json响应
@@ -28,7 +28,7 @@ func (r PlatformResponse) RenderData(data ...interface{}) gin.H {
 }
 
 // RenderPage 响应分页
-func (r PlatformResponse) RenderPage(data interface{}, page *utils.Pager) gin.H {
+func (r PlatformResponse) RenderPage(data interface{}, page *pagination.Pager) gin.H {
 	json := gin.H{
 		"data": data,
 		"paging": gin.H{

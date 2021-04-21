@@ -1,8 +1,6 @@
 package server
 
 import (
-	"encoding/json"
-
 	"github.com/gin-gonic/gin"
 	"zodream.cn/godream/modules/chat/models"
 )
@@ -45,15 +43,14 @@ func (h *Hub) Run() {
 				close(client.send)
 			}
 		case message := <-h.broadcast:
-			msgByte, _ := json.Marshal(gin.H{
+			msgByte := encodeJSON(EVENT_MESSAGE, gin.H{
 				"data": message,
 			})
-			str := encodeMessage(EVENT_MESSAGE, MESSAGE_TYPE_JSON, string(msgByte))
 			for client := range h.clients {
 				if !message.IsRoom(client.roomType, client.roomId) {
 					continue
 				}
-				client.send <- []byte(str)
+				client.send <- msgByte
 			}
 		}
 	}

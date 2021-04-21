@@ -13,8 +13,7 @@ import (
 func RegisterAPI(app *gin.Engine) {
 	g := app.Group("/open")
 	open.Register(g)
-	api := g.Group("")
-	api.Use(middleware.REST, middleware.CORS)
+	api := g.Group("", middleware.REST)
 	{
 		routes := GroupFuncMap{
 			"/auth":    auth.RegisterAPI,

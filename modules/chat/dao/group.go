@@ -9,9 +9,9 @@ import (
 	"zodream.cn/godream/utils/rule"
 )
 
-func GetGroupList(user int) []*entities.Group {
+func GetGroupList(user uint) []*entities.Group {
 	var itemId []int
-	database.DB.Model(&entities.Group{}).Where("user_id=?", user).Pluck("group_id", &itemId)
+	database.DB.Model(&entities.GroupUser{}).Where("user_id=?", user).Pluck("group_id", &itemId)
 	var items []*entities.Group
 	if len(itemId) < 1 {
 		return items

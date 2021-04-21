@@ -1,7 +1,7 @@
 package models
 
 type Group struct {
-	ID   uint
-	Name string
-	Logo string
+	ID   uint   `json:"id"`
+	Name string `json:"name"`
+	Logo string `json:"logo"`
 }

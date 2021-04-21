@@ -14,8 +14,8 @@ func initCORS() {
 	CORS = cors.New(cors.Config{
 		AllowAllOrigins:  true,
 		AllowMethods:     []string{"GET", "PUT", "POST", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"x-xq5-jwt", "Content-Type", "Origin", "Content-Length"},
-		ExposeHeaders:    []string{"x-xq5-jwt"},
+		AllowHeaders:     []string{"Authorization", "Content-Disposition", "Content-Type", "Origin", "Content-Length"},
+		ExposeHeaders:    []string{"Content-Disposition"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
 	})

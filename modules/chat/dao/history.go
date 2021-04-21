@@ -8,9 +8,9 @@ import (
 	"zodream.cn/godream/utils"
 )
 
-func GetHistories(user int) []*models.HistoryItem {
+func GetHistories(user uint) []*models.HistoryItem {
 	var histories []*entities.History
-	database.DB.Where("user_id=?", user).Order("updated_at desc").Find(histories)
+	database.DB.Where("user_id=?", user).Order("updated_at desc").Find(&histories)
 	items := make([]*models.HistoryItem, len(histories))
 	if len(histories) < 1 {
 		return items
@@ -121,6 +121,9 @@ func GetHistories(user int) []*models.HistoryItem {
 }
 
 func addHistory(user uint, itemType uint, itemId uint, messageId uint, count uint) {
+	if itemId < 1 {
+		return
+	}
 	var model entities.History
 	database.DB.Where("user_id=?", user).Where("item_type=?", itemType).Where("item_id=?", itemId).First(&model)
 	now := uint(utils.Now())
@@ -141,4 +144,9 @@ func addHistory(user uint, itemType uint, itemId uint, messageId uint, count uin
 func RemoveHistory(user uint, itemType uint, itemId uint) {
 	var model entities.History
 	database.DB.Where("user_id=?", user).Where("item_type=?", itemType).Where("item_id=?", itemId).Delete(model)
+}
+
+func RemoveIdHistory(user uint, id uint) {
+	var model entities.History
+	database.DB.Where("user_id=?", user).Where("id=?", id).Delete(model)
 }

@@ -6,6 +6,7 @@ import (
 
 	"zodream.cn/godream/configs"
 	"zodream.cn/godream/database"
+	"zodream.cn/godream/modules/open/middleware"
 	"zodream.cn/godream/routes"
 	"zodream.cn/godream/sessions"
 	"zodream.cn/godream/view"
@@ -20,6 +21,7 @@ func main() {
 	}
 	database.InitDb()
 	r := gin.Default()
+	r.Use(middleware.CORS)
 	r.Use(sessions.New())
 	r.Use(gzip.Gzip(gzip.DefaultCompression))
 	routes.Register(r)

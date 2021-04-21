@@ -2,14 +2,14 @@ package response
 
 import (
 	"github.com/gin-gonic/gin"
-	"zodream.cn/godream/utils"
+	"zodream.cn/godream/utils/pagination"
 )
 
 // IJsonResponse json响应接口
 type IJsonResponse interface {
 	Render(data gin.H) gin.H
 	RenderData(data ...interface{}) gin.H
-	RenderPage(data interface{}, page *utils.Pager) gin.H
+	RenderPage(data interface{}, page *pagination.Pager) gin.H
 	RenderFailure(data ...interface{}) gin.H
 }
 
@@ -38,7 +38,7 @@ func (r JSONResponse) RenderData(data ...interface{}) gin.H {
 }
 
 // RenderPage 响应分页
-func (r JSONResponse) RenderPage(data interface{}, page *utils.Pager) gin.H {
+func (r JSONResponse) RenderPage(data interface{}, page *pagination.Pager) gin.H {
 	json := gin.H{
 		"code":   200,
 		"status": "success",

@@ -1,13 +1,15 @@
 package dao
 
 import (
+	"errors"
+
 	"zodream.cn/godream/database"
 	auth_models "zodream.cn/godream/modules/auth/models"
 	"zodream.cn/godream/modules/chat/entities"
 	"zodream.cn/godream/modules/chat/models"
 )
 
-func GetFriendList(user int) []*models.FriendGroup {
+func GetFriendList(user uint) []*models.FriendGroup {
 	var groups []*entities.FriendClassify
 	database.DB.Where("user_id=?", user).Find(&groups)
 	var users []*entities.Friend
@@ -70,4 +72,34 @@ func GetFriendList(user int) []*models.FriendGroup {
 		}
 	}
 	return items
+}
+
+func FollowUser(user uint, id uint, group uint, remark string) error {
+	var userModel auth_models.UserSimple
+	database.DB.Select("id,name").Where("status=10").First(&userModel, id)
+	if userModel.ID < 1 {
+		return errors.New("用户不存在")
+	}
+	if !hasClassify(user, group) {
+		return errors.New("分组不存在")
+	}
+	return nil
+}
+
+func RemoveFriend(user uint, id uint) {
+	database.DB.Where("user_id=?", id).Where("belong_id=?", user).Delete(entities.Friend{})
+	RemoveHistory(user, 0, id)
+}
+
+func MoveFriend(user uint, id uint, group uint) error {
+	return nil
+}
+
+func hasClassify(user uint, id uint) bool {
+	if id < 10 {
+		return true
+	}
+	var count int64
+	database.DB.Model(entities.FriendClassify{}).Where("user_id=?", user).Where("id=?", id).Count(&count)
+	return count > 0
 }
