@@ -8,16 +8,16 @@ type User struct {
 	Name      string    `json:"name"`
 	Email     string    `json:"email"`
 	Password  string    `json:"password"`
-	Sex       int32     `json:"sex"`
+	Sex       uint32    `json:"sex"`
 	Avatar    string    `json:"avatar"`
 	Birthday  time.Time `json:"birthday"`
 	Money     int       `json:"money"`
 	Credits   int       `json:"credits"`
-	ParentId  int       `json:"parent_id"`
+	ParentId  uint      `json:"parent_id"`
 	Token     string    `json:"token"`
-	Status    int32     `json:"status"`
-	UpdatedAt int       `json:"updated_at"`
-	CreatedAt int       `json:"created_at"`
+	Status    uint32    `json:"status"`
+	UpdatedAt uint      `json:"updated_at"`
+	CreatedAt uint      `json:"created_at"`
 }
 
 // TableName 表名

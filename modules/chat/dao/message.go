@@ -94,15 +94,9 @@ func GetPing(user uint, startTime uint, itemType uint32, itemId uint) map[string
 	}
 	var messageCount int64
 	query.Count(&messageCount)
-	var applyCount int64
-	q := database.DB.Model(&entities.Apply{}).Where("item_id=?", user).Where("item_type=0").Where("status=0")
-	if startTime > 0 {
-		query.Where("created_at>=?", startTime)
-	}
-	q.Count(&applyCount)
 	return map[string]interface{}{
 		"message_count": messageCount,
-		"apply_count":   applyCount,
+		"apply_count":   ApplyCount(user, startTime),
 		"data":          GetMessageList(user, startTime, itemType, itemId),
 		"next_time":     utils.Now() + 1,
 	}

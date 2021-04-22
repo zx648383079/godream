@@ -16,7 +16,7 @@ func FormatWord(word string, replace string) RuleItem {
 	}
 }
 
-func FormatUser(word string, user int) RuleItem {
+func FormatUser(word string, user uint) RuleItem {
 	return RuleItem{
 		"s": word,
 		"u": user,

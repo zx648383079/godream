@@ -16,7 +16,7 @@ func BlogPage(c *gin.Context) {
 		return
 	}
 	var queries models.BlogQueries
-	c.ShouldBindQuery(queries)
+	c.ShouldBindQuery(&queries)
 	items, pager, _ := dao.GetBlogList(&queries)
 	api := c.Keys["json"].(response.IJsonResponse)
 	c.JSON(200, api.RenderPage(items, pager))

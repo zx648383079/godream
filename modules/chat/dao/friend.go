@@ -7,6 +7,7 @@ import (
 	auth_models "zodream.cn/godream/modules/auth/models"
 	"zodream.cn/godream/modules/chat/entities"
 	"zodream.cn/godream/modules/chat/models"
+	"zodream.cn/godream/utils"
 )
 
 func GetFriendList(user uint) []*models.FriendGroup {
@@ -75,6 +76,9 @@ func GetFriendList(user uint) []*models.FriendGroup {
 }
 
 func FollowUser(user uint, id uint, group uint, remark string) error {
+	if isFriend(user, id) {
+		return nil
+	}
 	var userModel auth_models.UserSimple
 	database.DB.Select("id,name").Where("status=10").First(&userModel, id)
 	if userModel.ID < 1 {
@@ -83,15 +87,52 @@ func FollowUser(user uint, id uint, group uint, remark string) error {
 	if !hasClassify(user, group) {
 		return errors.New("分组不存在")
 	}
+	exist := isFriend(id, user)
+	now := uint(utils.Now())
+	model := entities.Friend{
+		Name:       userModel.Name,
+		ClassifyId: group,
+		UserId:     userModel.ID,
+		BelongId:   user,
+		CreatedAt:  now,
+		UpdatedAt:  now,
+		Status:     0,
+	}
+	if exist {
+		model.Status = 1
+	}
+	database.DB.Create(&model)
+	if model.ID < 1 {
+		return errors.New("创建失败")
+	}
+	if exist {
+		database.DB.Model(entities.Friend{}).Where("belong_id=?", id).Where("user_id=?", user).Update("status", 1)
+		return nil
+	}
+	if hasApplyLog(user, 0, id) {
+		return nil
+	}
+	addApplyLog(user, 0, id, remark)
 	return nil
+}
+
+func isFriend(user uint, id uint) bool {
+	var count int64
+	database.DB.Model(entities.Friend{}).Where("belong_id=?", user).Where("user_id=?", id).Count(&count)
+	return count > 0
 }
 
 func RemoveFriend(user uint, id uint) {
 	database.DB.Where("user_id=?", id).Where("belong_id=?", user).Delete(entities.Friend{})
 	RemoveHistory(user, 0, id)
+	database.DB.Model(entities.Friend{}).Where("belong_id=?", id).Where("user_id=?", user).Update("status", 0)
 }
 
 func MoveFriend(user uint, id uint, group uint) error {
+	if !hasClassify(user, group) {
+		return errors.New("分组错误")
+	}
+	database.Model(entities.Friend{}).Where("user_id=?", id).Where("belong_id=?", user).Update("classify_id", group)
 	return nil
 }
 

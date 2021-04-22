@@ -46,8 +46,14 @@ func renderField(b *strings.Builder, column *models.Column) {
 	b.WriteString("\t")
 	b.WriteString(name)
 	b.WriteString(" ")
-	b.WriteString(DataType(column.DataType, false))
-	b.WriteString(" `json:\"")
+	b.WriteString(DataType(column.DataType, column.Nullable == "YES"))
+	b.WriteString(" `")
+	if column.Key == "PRI" {
+		b.WriteString("gorm:\"primary_key\"")
+	} else if column.Key == "INDEX" {
+		b.WriteString("gorm:\"index\"")
+	}
+	b.WriteString("json:\"")
 	b.WriteString(column.Name)
 	b.WriteString("\"`\n")
 }

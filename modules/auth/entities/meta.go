@@ -3,7 +3,7 @@ package entities
 // UserMeta Model
 type UserMeta struct {
 	ID      uint   `gorm:"primary_key" json:"id"`
-	UserId  int    `json:"user_id"`
+	UserId  uint   `json:"user_id"`
 	Name    string `json:"name"`
 	Content string `json:"content"`
 }

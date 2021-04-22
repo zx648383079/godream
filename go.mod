@@ -14,6 +14,7 @@ require (
 	github.com/go-redis/redis/v8 v8.8.0 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/gomarkdown/markdown v0.0.0-20210408062403-ad838ccf8cdd // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/jinzhu/configor v1.2.1
 	github.com/nats-io/nats-server/v2 v2.2.1 // indirect

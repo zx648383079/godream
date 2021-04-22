@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"github.com/gomarkdown/markdown"
 	"zodream.cn/godream/database"
 	"zodream.cn/godream/modules/blog/entities"
 	"zodream.cn/godream/modules/blog/models"
@@ -33,6 +34,6 @@ func GetBlogFull(id int) (map[string]interface{}, error) {
 	for _, v := range metaItems {
 		data[v.Name] = v.Content
 	}
-	data["content"] = string(data["content"].([]uint8))
+	data["content"] = string(markdown.ToHTML(data["content"].([]byte), nil, nil))
 	return data, nil
 }

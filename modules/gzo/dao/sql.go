@@ -23,7 +23,7 @@ func GetTable(table string) (*models.Table, []*models.Column) {
 // GetColumns 获取表的列
 func GetColumns(table string) []*models.Column {
 	var cols []*models.Column
-	database.DB.Raw("select COLUMN_NAME as name, DATA_TYPE as data_type from INFORMATION_SCHEMA.COLUMNS where TABLE_SCHEMA=database() and TABLE_NAME=? order by ORDINAL_POSITION asc", table).Table("INFORMATION_SCHEMA.COLUMNS").Scan(&cols)
+	database.DB.Raw(fmt.Sprintf("SHOW FULL COLUMNS FROM `%s`", table)).Scan(&cols)
 	return cols
 }
 

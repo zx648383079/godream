@@ -1,11 +1,9 @@
 package models
 
-import (
-	base "zodream.cn/godream/models"
-)
+import "zodream.cn/godream/utils/search"
 
 type BlogQueries struct {
-	base.Queries
+	search.Queries
 	User                uint   `form:"user"`
 	Category            uint   `form:"category"`
 	Sort                string `form:"sort"`

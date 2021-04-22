@@ -1,4 +1,4 @@
-package models
+package search
 
 type Queries struct {
 	Page     uint   `form:"page" json:"page"`

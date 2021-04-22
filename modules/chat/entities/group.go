@@ -6,9 +6,9 @@ type Group struct {
 	Name        string `json:"name"`
 	Logo        string `json:"logo"`
 	Description string `json:"description"`
-	UserId      int    `json:"user_id"`
-	UpdatedAt   int    `json:"updated_at"`
-	CreatedAt   int    `json:"created_at"`
+	UserId      uint   `json:"user_id"`
+	UpdatedAt   uint   `json:"updated_at"`
+	CreatedAt   uint   `json:"created_at"`
 }
 
 // TableName 表名

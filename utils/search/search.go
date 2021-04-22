@@ -1,4 +1,4 @@
-package utils
+package search
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func search(query *gorm.DB, columns []string, value string) *gorm.DB {
+func Where(query *gorm.DB, columns []string, value string) *gorm.DB {
 	keywords := strings.Split(value, " ")
 	for _, item := range keywords {
 		item = strings.TrimSpace(item)
