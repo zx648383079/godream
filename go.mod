@@ -18,6 +18,7 @@ require (
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/jinzhu/configor v1.2.1
 	github.com/nats-io/nats-server/v2 v2.2.1 // indirect
+	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	golang.org/x/crypto v0.0.0-20210415154028-4f45737414dc
 	golang.org/x/sys v0.0.0-20210415045647-66c3f260301c // indirect
