@@ -34,5 +34,10 @@ go install golang.org/x/tools/cmd/fiximports
 go install golang.org/x/tools/cmd/gopls
 go install golang.org/x/tools/cmd/godex
 
-
 ```
+
+### live 模块说明
+
+代码来源 [livego](https://github.com/gwuhaolin/livego) 
+
+同时与本项目进行逻辑结构适配
